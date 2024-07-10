@@ -1,0 +1,31 @@
+{% extends 'template_base.html' %}
+
+{% block title %}
+    Vehiculos
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <a href="/crear_vehiculo" class="btn btn-info"> Agregar Vehiculo </a>
+    </div>
+</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Tipo</td>
+                <td>Marca</td>
+                <td>Modelo</td>
+                <td>Cilindrada</td>
+            </tr>
+        </thead>
+        {% for vehiculo in vehiculos %}
+            <tr>
+                <td>{{vehiculo.tipo}}</td>
+                <td>{{vehiculo.marca}}</td>
+                <td>{{vehiculo.modelo}}</td>
+                <td>{{vehiculo.cilindrada}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
