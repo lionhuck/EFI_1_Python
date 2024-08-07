@@ -14,4 +14,18 @@ def index():
         'index.html'
     )
 
+@app.route("/celulares")
+def celulares():
+    return render_template(
+        'celulares.html'
+    )
+
+
+@app.route("/crear_celulares")
+def crear():
+    return render_template(
+        'crear_celulares.html'
+    )
+
+
 from celulares import *
