@@ -3,25 +3,41 @@
 {% block title %} Añade un Vehiculo {% endblock %}
 
 {% block body %}
+<div class="container mt-5">
     <form action="" method="post">
-        <label for="">Tipo</label>
-        <select class="select" name="tipo_vehiculo">
-            <option value="Auto">Auto</option>
-            <option value="Motocicleta">Motocicleta</option>
-        </select>
-
-        <label for="">Marca</label>
-        <input type="text" name="marca_vehiculo">
-
-        <label for="">Modelo</label>
-        <input type="number" min="2000" max="2024" name="modelo_vehiculo">
-
-        <label for="">Cilindrada</label>
-        <input type="number" min="200" max="4000" name="cilindrada_vehiculo">
-
-        <label for="">Precio</label>
-        <input type="number" min="1000000" name="precio_vehiculo">
-
-        <button type="submit">Guardar Vehiculo</button>
+        <table class="table form-table table-bordered">
+            <tbody>
+                <tr>
+                    <th><label for="marca">Marca</label></th>
+                    <td>
+                        <select class="form-select" name="marca">
+                            <option value="Samsung">Samsung</option>
+                            <option value="Apple">Apple</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="equipo">Equipo</label></th>
+                    <td><input type="number" class="form-control" min="2000" max="2024" name="equipo"></td>
+                </tr>
+                <tr>
+                    <th><label for="modelo">Modelo</label></th>
+                    <td><input type="number" class="form-control" min="2000" max="2024" name="modelo"></td>
+                </tr>
+                <tr>
+                    <th><label for="categoria">Categoria</label></th>
+                    <td><input type="text" class="form-control" name="categoria"></td>
+                </tr>
+                <tr>
+                    <th><label for="costo">Costo</label></th>
+                    <td><input type="number" class="form-control" min="1000000" name="costo"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Guardar Celular</button></td>
+                </tr>
+            </tbody>
+        </table>
     </form>
+</div>
+
 {% endblock %}
