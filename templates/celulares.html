@@ -1,30 +1,33 @@
 {% extends 'template_base.html' %}
 
 {% block title %}
-    Vehiculos
+    Celulares
 {% endblock %}
 
 {% block body %}
 <div class="row">
     <div class="col">
-        <a href="/crear_vehiculo" class="btn btn-info"> Agregar Vehiculo </a>
+        <a href="/celulares" class="btn btn-info"> Crear celular </a>
     </div>
 </div>
     <table class="table">
         <thead>
             <tr>
-                <td>Tipo</td>
-                <td>Marca</td>
+                <td>Equipo</td>
                 <td>Modelo</td>
-                <td>Cilindrada</td>
+                <td>Categoria</td>
+                <td>Fabricante</td>
+                <td>Stock</td>
+
             </tr>
         </thead>
-        {% for vehiculo in vehiculos %}
+        {% for celular in celulares %}
             <tr>
-                <td>{{vehiculo.tipo}}</td>
-                <td>{{vehiculo.marca}}</td>
-                <td>{{vehiculo.modelo}}</td>
-                <td>{{vehiculo.cilindrada}}</td>
+                <td>{{celular.equipo}}</td>
+                <td>{{celular.modelo}}</td>
+                <td>{{celular.categoria}}</td>
+                <td>{{celular.fabricante}}</td>
+                <td>{{celular.stock}}</td>
             </tr>
         {% endfor %}
     </table>
