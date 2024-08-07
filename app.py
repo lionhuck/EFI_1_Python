@@ -8,6 +8,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+from celulares import  *
+
+
 @app.route("/")
 def index():
     return render_template(
@@ -20,12 +23,16 @@ def celulares():
         'celulares.html'
     )
 
+@app.route("/paises", methods=['POST', 'GET'])
+def paises(): 
 
-@app.route("/crear_celulares")
-def crear():
-    return render_template(
-        'crear_celulares.html'
-    )
+    
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nuevo_pais = Pais(nombre=nombre)
+        db.session.add(nuevo_pais)
+        db.session.commit()
+    paises_query = Pais.query.all()
+    return render_template('paises.html',paises = paises_query)
 
 
-from celulares import *
