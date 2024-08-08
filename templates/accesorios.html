@@ -1,0 +1,46 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Accesorios {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna para la tabla de accesorios -->
+        <div class="col-md-6">
+            <h2>Listado de Accesorios</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for accesorio in accesorios %}
+                    <tr>
+                        <td>{{ accesorio.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Columna para el formulario -->
+        <div class="col-md-6">
+            <h2>Cargar Accesorio</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Nombre</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Accesorio</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
