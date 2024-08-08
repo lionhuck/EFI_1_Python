@@ -1,6 +1,6 @@
 {% extends 'template_base.html' %}
 
-{% block title %} Añade un Vehiculo {% endblock %}
+{% block title %} Fabricantes {% endblock %}
 
 {% block body %}
 <div class="container mt-5">
@@ -13,6 +13,7 @@
                     <tr>
                         <th>Fabricante</th>
                         <th>País de Origen</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,6 +21,12 @@
                     <tr>
                         <td>{{ fabricante.nombre }}</td>
                         <td>{{ fabricante.pais.nombre }}</td>
+                        <td>
+                            <a href="/editar/{{fabricante.id}}/fabricantes" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
