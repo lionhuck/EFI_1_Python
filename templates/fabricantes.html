@@ -1,0 +1,60 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Añade un Vehiculo {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna para la tabla de fabricantes -->
+        <div class="col-md-6">
+            <h2>Listado de Fabricantes</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fabricante</th>
+                        <th>País de Origen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fabricante in fabricantes %}
+                    <tr>
+                        <td>{{ fabricante.nombre }}</td>
+                        <td>{{ fabricante.pais.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Columna para el formulario -->
+        <div class="col-md-6">
+            <h2>Cargar Fabricante</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Nombre</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                        </tr>
+                        <tr>
+                            <th><label for="pais_id">País</label></th>
+                            <td>
+                                <select class="form-control" name="pais_id" required>
+                                    <option value="">Seleccione un país</option>
+                                    {% for pais in paises %}
+                                    <option value="{{ pais.id }}">{{ pais.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Fabricante</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

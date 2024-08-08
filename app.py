@@ -34,3 +34,34 @@ def paises():
     return render_template('paises.html',paises = paises_query)
 
 
+@app.route('/fabricantes', methods=['GET', 'POST'])
+def fabricantes():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        pais_id = request.form['pais_id']
+        nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
+        db.session.add(nuevo_fabricante)
+        db.session.commit()
+    fabricantes = Fabricante.query.all()
+    paises = Pais.query.all()
+    return render_template('fabricantes.html', fabricantes=fabricantes,paises=paises)
+
+@app.route("/accesorios", methods=['POST', 'GET'])
+def accesorios(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nuevo_accesorio = Accesorio(nombre=nombre)
+        db.session.add(nuevo_accesorio)
+        db.session.commit()
+    accesorios_query = Accesorio.query.all()
+    return render_template('accesorios.html',accesorios = accesorios_query)
+
+@app.route("/almacenes", methods=['POST', 'GET'])
+def almacenes(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nuevo_almacenes = Almacen(nombre=nombre)
+        db.session.add(nuevo_almacenes)
+        db.session.commit()
+    almacenes_query = Almacen.query.all()
+    return render_template('almacenes.html',almacenes = almacenes_query)
