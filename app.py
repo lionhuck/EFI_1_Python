@@ -91,20 +91,16 @@ def almacenes():
     almacenes_query = Almacen.query.all()
     return render_template('almacenes.html',almacenes = almacenes_query)
 
-@app.route("/caracteristicas")
-def caracteristicas():
-    return render_template(
-        'caracteristicas.html'
-    )
 
-@app.route("/cargar_caracteristicas", methods=['POST', 'GET'])
-def cargar_caracteristicas(): 
+@app.route("/caracteristicas", methods=['POST', 'GET'])
+def caracteristicas(): 
     if request.method == 'POST':
         nombre = request.form['nombre']
         descripcion = request.form['descripcion']
-        nuevo_caracteristica = Caracteristica(nombre=nombre, descripcion=descripcion)
-        db.session.add(nuevo_caracteristica)
+        nueva_caracteristica = Caracteristica(nombre=nombre,descripcion=descripcion)
+        db.session.add(nueva_caracteristica)
         db.session.commit()
-    caracteristicas_query = Caracteristica.query.all()
-    return render_template('cargar_caracteristicas.html',caracteristicas = caracteristicas_query)
+        return redirect(url_for('caracteristicas'))  # Redirige después de editar
+    caracteristicas = Caracteristica.query.all()
+    return render_template('caracteristicas.html',caracteristicas = caracteristicas)
 

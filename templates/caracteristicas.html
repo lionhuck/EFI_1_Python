@@ -1,12 +1,12 @@
 {% extends 'template_base.html' %}
 
-{% block title %} Cargar Características {% endblock %}
+{% block title %} Gestión de Características {% endblock %}
 
 {% block body %}
 <div class="container mt-5">
     <div class="row">
         <!-- Columna para la tabla de características -->
-        <div class="col-md-12">
+        <div class="col-md-6">
             <h2>Listado de Características</h2>
             <table class="table table-bordered">
                 <thead>
@@ -24,6 +24,28 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <!-- Columna para el formulario -->
+        <div class="col-md-6">
+            <h2>Nueva Característica</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Tipo</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                        </tr>
+                        <tr>
+                            <th><label for="descripcion">Descripción</label></th>
+                            <td><input type="text" class="form-control" name="descripcion" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Característica</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
     </div>
 </div>
