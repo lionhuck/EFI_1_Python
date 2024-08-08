@@ -1,0 +1,49 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Cargar Características {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna para la tabla de países -->
+        <div class="col-md-6">
+            <h2>Listado de Características</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for caracteristica in caracteristicas %}
+                    <tr>
+                        <td>{{ caracteristica.nombre }}</td>
+                        <td>{{ caracteristica.descripcion }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Columna para el formulario -->
+        <div class="col-md-6">
+            <h2>Cargar Característica</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Característica</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                            <td><input type="text" class="form-control" name="descripcion" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

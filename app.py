@@ -64,4 +64,4 @@ def almacenes():
         db.session.add(nuevo_almacenes)
         db.session.commit()
     almacenes_query = Almacen.query.all()
-    return render_template('accesorios.html',almacenes = almacenes_query)
+    return render_template('almacenes.html',almacenes = almacenes_query)
