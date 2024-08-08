@@ -25,8 +25,6 @@ def celulares():
 
 @app.route("/paises", methods=['POST', 'GET'])
 def paises(): 
-
-    
     if request.method == 'POST':
         nombre = request.form['nombre']
         nuevo_pais = Pais(nombre=nombre)
