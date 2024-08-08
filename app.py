@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -42,9 +42,34 @@ def fabricantes():
         nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
         db.session.add(nuevo_fabricante)
         db.session.commit()
+        return redirect(url_for('fabricantes'))  # Redirige para evitar el duplicado en caso de recarga
+
     fabricantes = Fabricante.query.all()
     paises = Pais.query.all()
+    return render_template('fabricantes.html', fabricantes=fabricantes, paises=paises)
+
+@app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
+def editar_fabricante(id):
+    fabricante = Fabricante.query.get_or_404(id)
+    paises = Pais.query.all()
+    
+    if request.method == 'POST':
+        fabricante.nombre = request.form['nombre']
+        fabricante.pais_id = request.form['pais_id']
+        db.session.commit()
+        return redirect(url_for('fabricantes'))  # Redirige después de editar
+
+    return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
+
+
+@app.route('/eliminar/fabricantes', methods=['POST'])
+def eliminar_fabricante(id):
+    fabricante = Fabricante.query.get(id)
+    db.session.delete(fabricante)
+    db.session.commit()
     return render_template('fabricantes.html', fabricantes=fabricantes,paises=paises)
+
+
 
 @app.route("/accesorios", methods=['POST', 'GET'])
 def accesorios(): 
