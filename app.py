@@ -33,7 +33,7 @@ def paises():
     paises_query = Pais.query.all()
     return render_template('paises.html',paises = paises_query)
 
-
+#-----------------------FABRICANTES-----------------------
 @app.route('/fabricantes', methods=['GET', 'POST'])
 def fabricantes():
     if request.method == 'POST':
@@ -61,7 +61,6 @@ def editar_fabricante(id):
 
     return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
 
-
 @app.route('/eliminar/fabricantes', methods=['POST'])
 def eliminar_fabricante(id):
     fabricante = Fabricante.query.get(id)
@@ -69,8 +68,7 @@ def eliminar_fabricante(id):
     db.session.commit()
     return render_template('fabricantes.html', fabricantes=fabricantes,paises=paises)
 
-
-
+#------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
 def accesorios(): 
     if request.method == 'POST':
@@ -81,6 +79,25 @@ def accesorios():
     accesorios_query = Accesorio.query.all()
     return render_template('accesorios.html',accesorios = accesorios_query)
 
+@app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
+def editar_accesorio(id):
+    accesorio = Accesorio.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        accesorio.nombre = request.form['nombre']
+        db.session.commit()
+        return redirect(url_for('accesorios'))  # Redirige después de editar
+
+    return render_template('editar_accesorios.html', accesorio = accesorio)
+
+@app.route('/eliminar/accesorios', methods=['POST'])
+def eliminar_accesorio(id):
+    accesorio = accesorio.query.get_or_404(id)
+    db.session.delete(accesorio)
+    db.session.commit()
+    return render_template('accesorios.html', accesorios = accesorio)
+
+#------------------------ALMACENES-----------------------
 @app.route("/almacenes", methods=['POST', 'GET'])
 def almacenes(): 
     if request.method == 'POST':
@@ -91,7 +108,7 @@ def almacenes():
     almacenes_query = Almacen.query.all()
     return render_template('almacenes.html',almacenes = almacenes_query)
 
-
+#------------------------CARACTERISTICAS-----------------------
 @app.route("/caracteristicas", methods=['POST', 'GET'])
 def caracteristicas(): 
     if request.method == 'POST':
@@ -102,5 +119,23 @@ def caracteristicas():
         db.session.commit()
         return redirect(url_for('caracteristicas'))  # Redirige después de editar
     caracteristicas = Caracteristica.query.all()
-    return render_template('caracteristicas.html',caracteristicas = caracteristicas)
+    return render_template('caracteristicas.html', caracteristicas = caracteristicas)
 
+@app.route('/editar/<id>/caracteristicas', methods=['GET', 'POST'])
+def editar_caracteristica(id):
+    caracteristica = Caracteristica.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        caracteristica.nombre = request.form['nombre']
+        caracteristica.descripcion = request.form['descripcion']
+        db.session.commit()
+        return redirect(url_for('caracteristicas'))  # Redirige después de editar
+
+    return render_template('editar_caracteristicas.html', caracteristica=caracteristica)
+
+@app.route('/eliminar/caracteristicas', methods=['POST'])
+def eliminar_caracteristica(id):
+    caracteristica = Caracteristica.query.get_or_404(id)
+    db.session.delete(caracteristica)
+    db.session.commit()
+    return render_template('caracteristicas.html', caracteristicas = caracteristicas)

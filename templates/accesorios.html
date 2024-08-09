@@ -18,6 +18,12 @@
                     {% for accesorio in accesorios %}
                     <tr>
                         <td>{{ accesorio.nombre }}</td>
+                        <td>
+                            <a href="/editar/{{accesorio.id}}/accesorios" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
