@@ -202,3 +202,21 @@ def caract_model():
     
     return render_template('caracterisitas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
 
+
+#------------------------ACCESORIOS-MODELOS-----------------------
+@app.route('/accesorios_modelos', methods=['GET', 'POST'])
+def acces_model():
+    if request.method == 'POST':
+        accesorio_id = request.form['accesorio_id']
+        modelo_id = request.form['modelo_id']
+        nuevo_acces_model = AccesorioModelo(accesorio_id = accesorio_id, modelo_id = modelo_id)
+        db.session.add(nuevo_acces_model)
+        db.session.commit()
+        return redirect(url_for('acces_model'))
+
+    acces_models = AccesorioModelo.query.all()
+    accesorios = Accesorio.query.all()  # Traer todos los accesorios
+    modelos = Modelo.query.all()  # Traer todos los modelos
+    
+    return render_template('accesorios_modelos.html', acces_models=acces_models, accesorios=accesorios, modelos=modelos)
+
