@@ -21,12 +21,15 @@ class Categoria(db.Model):   #Es donde en el texto dice Marca(me parecio mas per
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
 
+
 class Fabricante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
     pais_id = db.Column(db.Integer, db.ForeignKey('pais.id'), nullable=False)
 
     pais = db.relationship('Pais', backref=db.backref('fabricantes',lazy=True))
+
+
 class Caracteristica(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
@@ -37,7 +40,6 @@ class CaracteristicaModelo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     caracteristica_id = db.Column(db.Integer, db.ForeignKey('caracteristica.id'), nullable=False)
     modelo_id = db.Column(db.Integer, db.ForeignKey('modelo.id'), nullable=False)
-
 
     modelo = db.relationship('Modelo', backref=db.backref('CaracteristicasModelos', lazy=True))
     caracteristica = db.relationship('Caracteristica', backref=db.backref('CaracteristicasModelos', lazy=True))
