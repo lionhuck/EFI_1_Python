@@ -1,0 +1,69 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Modelos {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna para la tabla de modelos -->
+        <div class="col-md-6">
+            <h2>Listado de Modelos</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Fabricante</th>
+                        <th>País de Origen</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for modelo in modelos %}
+                    <tr>
+                        <td>{{ modelo.nombre }}</td>
+                        <td>{{ modelo.fabricante.nombre }}</td>
+                        <td>{{ modelo.fabricante.pais.nombre }}</td>
+                        <td>
+                            <a href="/editar/{{modelo.id}}/modelos" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Columna para el formulario -->
+        <div class="col-md-6">
+            <h2>Cargar Modelo</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Nombre</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                        </tr>
+                        <tr>
+                            <th><label for="fabricante_id">Fabricante</label></th>
+                            <td>
+                                <select class="form-control" name="fabricante_id" required>
+                                    <option value="">Seleccione un fabricante</option>
+                                    {% for fabricante in fabricantes %}
+                                    <option value="{{ fabricante.id }}">{{ fabricante.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Modelo</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

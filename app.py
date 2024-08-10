@@ -33,6 +33,50 @@ def paises():
     paises_query = Pais.query.all()
     return render_template('paises.html',paises = paises_query)
 
+
+#-----------------------MODELOS--------------------------
+@app.route('/modelos', methods=['GET', 'POST'])
+def modelos():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        fabricante_id = request.form['fabricante_id']
+        nuevo_modelo = Modelo(nombre=nombre, fabricante_id=fabricante_id)
+        db.session.add(nuevo_modelo)
+        db.session.commit()
+        return redirect(url_for('modelos'))
+    
+    modelos = Modelo.query.all()
+    fabricantes = Fabricante.query.all()
+    return render_template('modelos.html', modelos=modelos, fabricantes=fabricantes)
+    
+    
+# @app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
+# def editar_fabricante(id):
+#     fabricante = Fabricante.query.get_or_404(id)
+#     paises = Pais.query.all()
+    
+#     if request.method == 'POST':
+#         fabricante.nombre = request.form['nombre']
+#         fabricante.pais_id = request.form['pais_id']
+#         db.session.commit()
+#         return redirect(url_for('fabricantes'))  # Redirige después de editar
+
+#     return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
+
+#-----------------------CATEGORIAS--------------------------
+
+@app.route("/categorias", methods=['POST', 'GET'])
+def categorias(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nueva_categoria = Categoria(nombre=nombre)
+        db.session.add(nueva_categoria)
+        db.session.commit()
+    categorias_query = Categoria.query.all()
+    return render_template('categorias.html',categorias = categorias_query)
+    
+
+
 #-----------------------FABRICANTES-----------------------
 @app.route('/fabricantes', methods=['GET', 'POST'])
 def fabricantes():
@@ -139,3 +183,22 @@ def eliminar_caracteristica(id):
     db.session.delete(caracteristica)
     db.session.commit()
     return render_template('caracteristicas.html', caracteristicas = caracteristicas)
+
+
+#------------------------CARACTERISTICAS-MODELOS-----------------------
+@app.route('/caracteristicas_modelos', methods=['GET', 'POST'])
+def caract_model():
+    if request.method == 'POST':
+        caracteristica_id = request.form['caracteristica_id']
+        modelo_id = request.form['modelo_id']
+        nuevo_caract_model = CaracteristicaModelo(modelo_id=modelo_id, caracteristica_id=caracteristica_id)
+        db.session.add(nuevo_caract_model)
+        db.session.commit()
+        return redirect(url_for('caract_model'))
+
+    caracts_models = CaracteristicaModelo.query.all()
+    caracteristicas = Caracteristica.query.all()  # Traer todas las características
+    modelos = Modelo.query.all()  # Traer todos los modelos
+    
+    return render_template('caracterisitas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+
