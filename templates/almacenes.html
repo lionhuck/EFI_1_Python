@@ -19,6 +19,12 @@
                     {% for almacen in almacenes %}
                     <tr>
                         <td>{{ almacen.nombre }}</td>
+                        <td>
+                            <a href="/editar/{{almacen.id}}/almacenes" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

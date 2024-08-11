@@ -46,7 +46,7 @@ def editar_paises(id):
         db.session.commit()
         return redirect(url_for('paises'))  # Redirige después de editar
 
-    return render_template('editar_paises.html', paises = paises)
+    return render_template('editar_paises.html', pais=pais)
 
 
 
@@ -143,7 +143,7 @@ def editar_almacenes(id):
         db.session.commit()
         return redirect(url_for('almacenes'))  # Redirige después de editar
 
-    return render_template('editar_almacenes.html', almacenes = almacenes)
+    return render_template('editar_almacenes.html', almacen=almacen)
 
 #------------------------CARACTERISTICAS-----------------------
 @app.route("/caracteristicas", methods=['POST', 'GET'])
@@ -185,7 +185,21 @@ def caract_model():
     caracteristicas = Caracteristica.query.all()  # Traer todas las características
     modelos = Modelo.query.all()  # Traer todos los modelos
     
-    return render_template('caracterisitas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+    return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+
+@app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
+def editar_caract_model(id):
+    caracteristica = CaracteristicaModelo.query.get_or_404(id)  # Verifica que este sea el modelo correcto
+    caracteristicas = Caracteristica.query.all()  # Asegúrate de que Caracteristica está definido correctamente
+    modelos = Modelo.query.all()
+
+    if request.method == 'POST':
+        caracteristica.caracteristica_id = request.form['caracteristica_id']
+        caracteristica.modelo_id = request.form['modelo_id']
+        db.session.commit()
+        return redirect(url_for('caract_model'))  # Asegúrate de que la ruta sea la correcta
+
+    return render_template('editar_caract_mod.html', caracteristica=caracteristica, caracteristicas=caracteristicas, modelos=modelos)
 
 #------------------------ACCESORIOS-MODELOS-----------------------
 @app.route('/accesorios_modelos', methods=['GET', 'POST'])
