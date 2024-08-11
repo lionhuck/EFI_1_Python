@@ -1,28 +1,28 @@
 {% extends 'template_base.html' %}
 
-{% block title %} Gestión de Características {% endblock %}
+{% block title %} Gestión de Proveedores {% endblock %}
 
 {% block body %}
 <div class="container mt-5">
     <div class="row">
         <!-- Columna para la tabla de características -->
         <div class="col-md-6">
-            <h2>Listado de Características</h2>
+            <h2>Listado de Proveedor</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Característica</th>
-                        <th>Descripción</th>
+                        <th>Proveedor</th>
+                        <th>CUIT</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for caracteristica in caracteristicas %}
+                    {% for proveedor in proveedores %}
                     <tr>
-                        <td>{{ caracteristica.nombre }}</td>
-                        <td>{{ caracteristica.descripcion }}</td>
+                        <td>{{ proveedor.nombre }}</td>
+                        <td>{{ proveedor.descripcion }}</td>
                         <td>
-                            <a href="/editar/{{caracteristica.id}}/caracteristicas" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="/editar/{{proveedor.id}}/proveedores" class="btn btn-warning btn-sm">Editar</a>
                             <form action="" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
@@ -35,20 +35,20 @@
 
         <!-- Columna para el formulario -->
         <div class="col-md-6">
-            <h2>Nueva Característica</h2>
+            <h2>Nuevo Proveedor</h2>
             <form action="" method="POST">
                 <table class="table form-table table-bordered">
                     <tbody>
                         <tr>
-                            <th><label for="nombre">Tipo</label></th>
+                            <th><label for="nombre">Nombre</label></th>
                             <td><input type="text" class="form-control" name="nombre" required></td>
                         </tr>
                         <tr>
-                            <th><label for="descripcion">Descripción</label></th>
-                            <td><input type="text" class="form-control" name="descripcion" required></td>
+                            <th><label for="descripcion">CUIT</label></th>
+                            <td><input type="text" class="form-control" name="cuit" required></td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Característica</button></td>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Proveedor</button></td>
                         </tr>
                     </tbody>
                 </table>

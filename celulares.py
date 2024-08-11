@@ -60,8 +60,7 @@ class Almacen(db.Model):
 class Proveedor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
-    apellido = db.Column(db.String(30), nullable=False)
-    mail = db.Column(db.String(50), nullable=False)
+    cuit = db.Column(db.String(30), nullable=False)
 
 class Accesorio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
