@@ -20,7 +20,7 @@
                     {% for proveedor in proveedores %}
                     <tr>
                         <td>{{ proveedor.nombre }}</td>
-                        <td>{{ proveedor.descripcion }}</td>
+                        <td>{{ proveedor.cuit }}</td>
                         <td>
                             <a href="/editar/{{proveedor.id}}/proveedores" class="btn btn-warning btn-sm">Editar</a>
                             <form action="" method="POST" style="display:inline;">
