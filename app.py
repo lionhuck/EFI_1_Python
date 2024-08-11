@@ -204,6 +204,20 @@ def acces_model():
     
     return render_template('accesorios_modelos.html', acces_models=acces_models, accesorios=accesorios, modelos=modelos)
 
+@app.route('/editar/<id>/accesorios_modelos', methods=['GET', 'POST'])
+def editar_acces_model(id):
+    accesorio = AccesorioModelo.query.get_or_404(id)
+    accesorios = Accesorio.query.all() 
+    modelos = Modelo.query.all()
+    
+    if request.method == 'POST':
+        accesorio.accesorio_id = request.form['accesorio_id']
+        accesorio.modelo_id = request.form['modelo_id']
+        db.session.commit()
+        return redirect(url_for('acces_model'))  # Redirige después de editar
+
+    return render_template('editar_acces_mod.html', accesorio=accesorio, accesorios=accesorios, modelos=modelos)
+
 #-----------------------FABRICANTES-----------------------
 @app.route('/fabricantes', methods=['GET', 'POST'])
 def fabricantes():

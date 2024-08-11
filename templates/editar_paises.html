@@ -1,0 +1,16 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Editar País {% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h4>Editando {{ pais.nombre }}</h4>
+        <form action="" method="post">
+            <div class="form-group">
+                <label for="nombre">Tipo</label>
+                <input type="text" class="form-control" name="nombre" value="{{ pais.nombre }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Editar</button>
+        </form>
+    </div>
+{% endblock %}

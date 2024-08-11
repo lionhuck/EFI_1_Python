@@ -13,6 +13,7 @@
                     <tr>
                         <th>Accesorios</th>
                         <th>Modelo</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,7 +22,7 @@
                         <td>{{ acces_model.accesorio.nombre }}</td>
                         <td>{{ acces_model.modelo.nombre }}</td>
                         <td>
-                            <a href="#" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="/editar/{{acces_model.id}}/accesorios_modelos" class="btn btn-warning btn-sm">Editar</a>
                             <form action="" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
