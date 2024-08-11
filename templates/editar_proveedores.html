@@ -1,0 +1,20 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Editar Proveedor {% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h4>Editando {{ proveedor.nombre }}</h4>
+        <form action="" method="post">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" name="nombre" value="{{ proveedor.nombre }}" required>
+            </div>
+            <div class="form-group">
+                <label for="cuit">CUIT</label>
+                <input type="text" class="form-control" name="cuit" value="{{ proveedor.cuit }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Editar</button>
+        </form>
+    </div>
+{% endblock %}

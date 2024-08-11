@@ -75,43 +75,6 @@ def categorias():
     categorias_query = Categoria.query.all()
     return render_template('categorias.html',categorias = categorias_query)
     
-
-
-#-----------------------FABRICANTES-----------------------
-@app.route('/fabricantes', methods=['GET', 'POST'])
-def fabricantes():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        pais_id = request.form['pais_id']
-        nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
-        db.session.add(nuevo_fabricante)
-        db.session.commit()
-        return redirect(url_for('fabricantes'))  # Redirige para evitar el duplicado en caso de recarga
-
-    fabricantes = Fabricante.query.all()
-    paises = Pais.query.all()
-    return render_template('fabricantes.html', fabricantes=fabricantes, paises=paises)
-
-@app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
-def editar_fabricante(id):
-    fabricante = Fabricante.query.get_or_404(id)
-    paises = Pais.query.all()
-    
-    if request.method == 'POST':
-        fabricante.nombre = request.form['nombre']
-        fabricante.pais_id = request.form['pais_id']
-        db.session.commit()
-        return redirect(url_for('fabricantes'))  # Redirige después de editar
-
-    return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
-
-@app.route('/eliminar/fabricantes', methods=['POST'])
-def eliminar_fabricante(id):
-    fabricante = Fabricante.query.get(id)
-    db.session.delete(fabricante)
-    db.session.commit()
-    return render_template('fabricantes.html', fabricantes=fabricantes,paises=paises)
-
 #------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
 def accesorios(): 
@@ -133,13 +96,6 @@ def editar_accesorio(id):
         return redirect(url_for('accesorios'))  # Redirige después de editar
 
     return render_template('editar_accesorios.html', accesorio = accesorio)
-
-@app.route('/eliminar/accesorios', methods=['POST'])
-def eliminar_accesorio(id):
-    accesorio = accesorio.query.get_or_404(id)
-    db.session.delete(accesorio)
-    db.session.commit()
-    return render_template('accesorios.html', accesorios = accesorio)
 
 #------------------------ALMACENES-----------------------
 @app.route("/almacenes", methods=['POST', 'GET'])
@@ -177,14 +133,6 @@ def editar_caracteristica(id):
 
     return render_template('editar_caracteristicas.html', caracteristica=caracteristica)
 
-@app.route('/eliminar/caracteristicas', methods=['POST'])
-def eliminar_caracteristica(id):
-    caracteristica = Caracteristica.query.get_or_404(id)
-    db.session.delete(caracteristica)
-    db.session.commit()
-    return render_template('caracteristicas.html', caracteristicas = caracteristicas)
-
-
 #------------------------CARACTERISTICAS-MODELOS-----------------------
 @app.route('/caracteristicas_modelos', methods=['GET', 'POST'])
 def caract_model():
@@ -220,3 +168,55 @@ def acces_model():
     
     return render_template('accesorios_modelos.html', acces_models=acces_models, accesorios=accesorios, modelos=modelos)
 
+#-----------------------FABRICANTES-----------------------
+@app.route('/fabricantes', methods=['GET', 'POST'])
+def fabricantes():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        pais_id = request.form['pais_id']
+        nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
+        db.session.add(nuevo_fabricante)
+        db.session.commit()
+        return redirect(url_for('fabricantes'))  # Redirige para evitar el duplicado en caso de recarga
+
+    fabricantes = Fabricante.query.all()
+    paises = Pais.query.all()
+    return render_template('fabricantes.html', fabricantes=fabricantes, paises=paises)
+
+@app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
+def editar_fabricante(id):
+    fabricante = Fabricante.query.get_or_404(id)
+    paises = Pais.query.all()
+    
+    if request.method == 'POST':
+        fabricante.nombre = request.form['nombre']
+        fabricante.pais_id = request.form['pais_id']
+        db.session.commit()
+        return redirect(url_for('fabricantes'))  # Redirige después de editar
+
+    return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
+
+#------------------------PROVEEDORES-----------------------
+@app.route("/proveedores", methods=['POST', 'GET'])
+def proveedores(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        cuit = request.form['cuit']
+        nuevo_proveedor = Proveedor(nombre=nombre,cuit=cuit)
+        db.session.add(nuevo_proveedor)
+        db.session.commit()
+        return redirect(url_for('proveedores'))  # Redirige después de editar
+    proveedores = Proveedor.query.all()
+    return render_template('proveedores.html', proveedores = proveedores)
+
+@app.route('/editar/<id>/proveedores', methods=['GET', 'POST'])
+def editar_proveedor(id):
+    proveedor = Proveedor.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        proveedor.nombre = request.form['nombre']
+        proveedor.cuit= request.form['cuit']
+        db.session.commit()
+        return redirect(url_for('proveedores'))  # Redirige después de editar
+
+    return render_template('editar_proveedores.html', proveedor=proveedor)
