@@ -66,18 +66,18 @@ def modelos():
     return render_template('modelos.html', modelos=modelos, fabricantes=fabricantes)
     
     
-# @app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
-# def editar_fabricante(id):
-#     fabricante = Fabricante.query.get_or_404(id)
-#     paises = Pais.query.all()
-    
-#     if request.method == 'POST':
-#         fabricante.nombre = request.form['nombre']
-#         fabricante.pais_id = request.form['pais_id']
-#         db.session.commit()
-#         return redirect(url_for('fabricantes'))  # Redirige después de editar
+@app.route('/editar/<id>/modelos', methods=['GET', 'POST'])
+def editar_modelo(id):
+    modelo = Modelo.query.get_or_404(id)
+    fabricantes = Fabricante.query.all()
 
-#     return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
+    if request.method == 'POST':
+        modelo.nombre = request.form['nombre']
+        modelo.modelo_id = request.form['fabricante_id']
+        db.session.commit()
+        return redirect(url_for('modelos'))  # Redirige después de editar
+
+    return render_template('editar_modelos.html', modelo=modelo, fabricantes=fabricantes)
 
 #-----------------------CATEGORIAS--------------------------
 
