@@ -23,6 +23,10 @@ def celulares():
         'celulares.html'
     )
 
+
+
+#-----------------------PAISES--------------------------
+
 @app.route("/paises", methods=['POST', 'GET'])
 def paises(): 
     if request.method == 'POST':
@@ -32,6 +36,18 @@ def paises():
         db.session.commit()
     paises_query = Pais.query.all()
     return render_template('paises.html',paises = paises_query)
+
+
+@app.route('/editar/<id>/paises', methods=['GET', 'POST'])
+def editar_paises(id):
+    pais = Pais.query.get_or_404(id)
+    if request.method == 'POST':
+        pais.nombre = request.form['nombre']
+        db.session.commit()
+        return redirect(url_for('paises'))  # Redirige después de editar
+
+    return render_template('editar_paises.html', paises = paises)
+
 
 
 #-----------------------MODELOS--------------------------
@@ -74,6 +90,16 @@ def categorias():
         db.session.commit()
     categorias_query = Categoria.query.all()
     return render_template('categorias.html',categorias = categorias_query)
+
+@app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
+def editar_categorias(id):
+    categoria = Categoria.query.get_or_404(id)
+    if request.method == 'POST':
+        categoria.nombre = request.form['nombre']
+        db.session.commit()
+        return redirect(url_for('categorias'))  # Redirige después de editar
+
+    return render_template('editar_categorias.html', categorias = categorias)
     
 #------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
@@ -107,6 +133,17 @@ def almacenes():
         db.session.commit()
     almacenes_query = Almacen.query.all()
     return render_template('almacenes.html',almacenes = almacenes_query)
+
+
+@app.route('/editar/<id>/almacenes', methods=['GET', 'POST'])
+def editar_almacenes(id):
+    almacen = Almacen.query.get_or_404(id)
+    if request.method == 'POST':
+        almacen.nombre = request.form['nombre']
+        db.session.commit()
+        return redirect(url_for('almacenes'))  # Redirige después de editar
+
+    return render_template('editar_almacenes.html', almacenes = almacenes)
 
 #------------------------CARACTERISTICAS-----------------------
 @app.route("/caracteristicas", methods=['POST', 'GET'])
@@ -149,7 +186,6 @@ def caract_model():
     modelos = Modelo.query.all()  # Traer todos los modelos
     
     return render_template('caracterisitas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
-
 
 #------------------------ACCESORIOS-MODELOS-----------------------
 @app.route('/accesorios_modelos', methods=['GET', 'POST'])
@@ -220,3 +256,4 @@ def editar_proveedor(id):
         return redirect(url_for('proveedores'))  # Redirige después de editar
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
+
