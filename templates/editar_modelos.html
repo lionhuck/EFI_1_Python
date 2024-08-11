@@ -1,0 +1,27 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Editar Modelo {% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h4>Editando {{ modelo.nombre }}</h4>
+        <form action="" method="post">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" name="nombre" value="{{ modelo.nombre }}" required>
+            </div>
+            <div class="form-group">
+                <label for="fabricante_id">Fabricante</label>
+                <select class="form-control" name="fabricante_id" required>
+                    <option value="">Seleccione un modelo</option>
+                    {% for fabricante in fabricantes %}
+                    <option value="{{ fabricante.id }}" {% if fabricante.id == modelo.fabricante_id %}selected{% endif %}>
+                        {{ fabricante.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Editar</button>
+        </form>
+    </div>
+{% endblock %}
