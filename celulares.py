@@ -44,19 +44,6 @@ class CaracteristicaModelo(db.Model):
     modelo = db.relationship('Modelo', backref=db.backref('CaracteristicasModelos', lazy=True))
     caracteristica = db.relationship('Caracteristica', backref=db.backref('CaracteristicasModelos', lazy=True))
 
-class Stock(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cantidad_disponible = db.Column(db.Integer, nullable=False)
-    equipo_id = db.Column(db.Integer, db.ForeignKey('equipo.id'), nullable=False)
-    almacen_id = db.Column(db.Integer, db.ForeignKey('almacen.id'), nullable=False)
-
-    almacen = db.relationship('Almacen', backref=db.backref('stocks', lazy=True))
-    equipo = db.relationship('Equipo', backref=db.backref('stocks', lazy=True))
-class Almacen(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(30), nullable=False)
-
-
 class Proveedor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)

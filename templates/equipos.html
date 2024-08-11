@@ -1,0 +1,86 @@
+{% extends 'template_base.html' %}
+
+{% block title %} Cargar Equipos {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna para la tabla de equipos -->
+        <div class="col-md-12">
+            <h2>Listado de Equipos</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Equipo</th>
+                        <th>Modelo</th>
+                        <th>Categoría</th>
+                        <th>Costo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipo in equipos %}
+                    <tr>
+                        <td>{{ equipo.nombre }}</td>
+                        <td>{{ equipo.modelo.nombre }}</td>
+                        <td>{{ equipo.categoria.nombre }}</td>
+                        <td>{{ equipo.costo }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_equipos', id=equipo.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="#" method="POST" style="display:inline-block;">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Columna para el formulario -->
+        <div class="col-md-12">
+            <h2>Nuevo Equipo</h2>
+            <form action="" method="POST">
+                <table class="table form-table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th><label for="nombre">Nombre</label></th>
+                            <td><input type="text" class="form-control" name="nombre" required></td>
+                        </tr>
+                        <tr>
+                            <th><label for="modelo_id">Modelo</label></th>
+                            <td>
+                                <select class="form-control" name="modelo_id" required>
+                                    <option value="">Seleccione un modelo</option>
+                                    {% for modelo in modelos %}
+                                    <option value="{{ modelo.id }}">{{ modelo.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label for="categoria_id">Categoría</label></th>
+                            <td>
+                                <select class="form-control" name="categoria_id" required>
+                                    <option value="">Seleccione una categoría</option>
+                                    {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label for="costo">Costo</label></th>
+                            <td><input type="text" class="form-control" name="costo" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Cargar Equipo</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
