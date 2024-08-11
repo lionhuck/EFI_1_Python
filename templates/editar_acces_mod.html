@@ -4,14 +4,14 @@
 
 {% block body %}
     <div class="container mt-5">
-        <h4>Editando {{ acces_model.nombre }}</h4>
+        <h4>Editando {{ accesorios.nombre }}</h4>
         <form action="" method="post">
             <div class="form-group">
                 <label for="accesorio_id">Accesorio</label>
                 <select class="form-control" name="accesorio_id" required>
                     <option value="">Seleccione un accesorio</option>
                     {% for accesorio in accesorios %}
-                    <option value="{{ accesorio.id }}" {% if accesorio.id == acces_model.accesorio_id %}selected{% endif %}>
+                    <option value="{{ accesorio.id }}" {% if accesorio.id == accesorio.accesorio_id %}selected{% endif %}>
                         {{ accesorio.nombre }}
                     </option>
                     {% endfor %}
@@ -22,7 +22,7 @@
                 <select class="form-control" name="modelo_id" required>
                     <option value="">Seleccione un modelo</option>
                     {% for modelo in modelos %}
-                    <option value="{{ modelo.id }}" {% if modelo.id == acces_model.modelo_id %}selected{% endif %}>
+                    <option value="{{ modelo.id }}" {% if modelo.id == accesorio.modelo_id %}selected{% endif %}>
                         {{ modelo.nombre }}
                     </option>
                     {% endfor %}

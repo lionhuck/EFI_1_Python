@@ -171,15 +171,16 @@ def acces_model():
 @app.route('/editar/<id>/accesorios_modelos', methods=['GET', 'POST'])
 def editar_acces_model(id):
     accesorio = AccesorioModelo.query.get_or_404(id)
-    modelo = Modelo.query.all()
+    accesorios = Accesorio.query.all() 
+    modelos = Modelo.query.all()
     
     if request.method == 'POST':
-        accesorio.nombre = request.form['accesorio_id']
-        accesorio.pais_id = request.form['modelo_id']
+        accesorio.accesorio_id = request.form['accesorio_id']
+        accesorio.modelo_id = request.form['modelo_id']
         db.session.commit()
-        return redirect(url_for('accesorios'))  # Redirige después de editar
+        return redirect(url_for('acces_model'))  # Redirige después de editar
 
-    return render_template('editar_acces_mod.html', accesorio=accesorio, modelo=modelo)
+    return render_template('editar_acces_mod.html', accesorio=accesorio, accesorios=accesorios, modelos=modelos)
 
 #-----------------------FABRICANTES-----------------------
 @app.route('/fabricantes', methods=['GET', 'POST'])
