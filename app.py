@@ -99,7 +99,7 @@ def editar_categorias(id):
         db.session.commit()
         return redirect(url_for('categorias'))  # Redirige después de editar
 
-    return render_template('editar_categorias.html', categorias = categorias)
+    return render_template('editar_categorias.html', categoria = categoria)
     
 #------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
