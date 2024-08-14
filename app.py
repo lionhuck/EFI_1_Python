@@ -11,17 +11,41 @@ migrate = Migrate(app, db)
 from celulares import  *
 
 
-@app.route("/")
-def index():
-    return render_template(
-        'index.html'
-    )
 
-@app.route("/celulares")
-def celulares():
-    return render_template(
-        'celulares.html'
-    )
+#-----------------------EQUIPOS!!! (Index del programa) --------------------------
+@app.route('/', methods=['GET', 'POST'])
+def equipos():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        modelo_id = request.form['modelo_id']
+        categoria_id = request.form['categoria_id']
+        costo = request.form['costo']
+        nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
+        db.session.add(nuevo_equipo)
+        db.session.commit()
+        return redirect(url_for('equipos'))
+    
+    equipos = Equipo.query.all()
+    modelos = Modelo.query.all()
+    categorias = Categoria.query.all()
+    return render_template('equipos.html', equipos=equipos, modelos=modelos, categorias=categorias)
+    
+    
+@app.route('/editar/<id>/equipos', methods=['GET', 'POST'])
+def editar_equipos(id):
+    equipo = Equipo.query.get_or_404(id)
+    modelos = Modelo.query.all()
+    categorias = Categoria.query.all()
+
+    if request.method == 'POST':
+        equipo.nombre = request.form['nombre']
+        equipo.modelo_id = request.form['modelo_id']
+        equipo.categoria_id = request.form['categoria_id']
+        equipo.costo = request.form['costo']
+        db.session.commit()
+        return redirect(url_for('equipos'))  # Redirige después de editar
+
+    return render_template('editar_equipos.html', equipo=equipo, modelos=modelos, categorias=categorias)
 
 
 
@@ -122,28 +146,6 @@ def editar_accesorio(id):
         return redirect(url_for('accesorios'))  # Redirige después de editar
 
     return render_template('editar_accesorios.html', accesorio = accesorio)
-
-#------------------------ALMACENES-----------------------
-@app.route("/almacenes", methods=['POST', 'GET'])
-def almacenes(): 
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        nuevo_almacenes = Almacen(nombre=nombre)
-        db.session.add(nuevo_almacenes)
-        db.session.commit()
-    almacenes_query = Almacen.query.all()
-    return render_template('almacenes.html',almacenes = almacenes_query)
-
-
-@app.route('/editar/<id>/almacenes', methods=['GET', 'POST'])
-def editar_almacenes(id):
-    almacen = Almacen.query.get_or_404(id)
-    if request.method == 'POST':
-        almacen.nombre = request.form['nombre']
-        db.session.commit()
-        return redirect(url_for('almacenes'))  # Redirige después de editar
-
-    return render_template('editar_almacenes.html', almacenes = almacenes)
 
 #------------------------CARACTERISTICAS-----------------------
 @app.route("/caracteristicas", methods=['POST', 'GET'])

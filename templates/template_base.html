@@ -13,20 +13,36 @@
 </head>
 
 <body>
-    <nav class="nav justify-content-center">
-        <a class="nav-link active" href="/accesorios" aria-current="page">Accesorios</a>
-        <a class="nav-link active" href="/almacenes" aria-current="page">Almacenes</a>
-        <a class="nav-link active" href="/categorias" aria-current="page">Categorías</a>
-        <a class="nav-link active" href="/caracteristicas" aria-current="page">Caracteristicas</a>
-        <a class="nav-link active" href="/celulares" aria-current="page">Celulares</a>
-        <a class="nav-link active" href="/modelos" aria-current="page">Modelos</a>
-        <a class="nav-link active" href="/fabricantes" aria-current="page">Fabricantes</a>
-        <a class="nav-link active" href="/paises" aria-current="page">Países</a>
-        <a class="nav-link active" href="/proveedores" aria-current="page">Proveedores</a>
-        <a class="nav-link active" href="/caracteristicas_modelos" aria-current="page">caract-mod</a>
-        <a class="nav-link active" href="/accesorios_modelos" aria-current="page">acces-mod</a>
-
-
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">EQUIPOS LEPAGO TEC</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Celulares</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/modelos">Modelos</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Más opciones
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/accesorios">Accesorios</a>
+                        <a class="dropdown-item" href="/categorias">Categorías</a>
+                        <a class="dropdown-item" href="/caracteristicas">Características</a>
+                        <a class="dropdown-item" href="/fabricantes">Fabricantes</a>
+                        <a class="dropdown-item" href="/paises">Países</a>
+                        <a class="dropdown-item" href="/proveedores">Proveedores</a>
+                        <a class="dropdown-item" href="/caracteristicas_modelos">caract-mod</a>
+                        <a class="dropdown-item" href="/accesorios_modelos">acces-mod</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </nav>
 
     {% block body %}{% endblock %}
