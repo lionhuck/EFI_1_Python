@@ -185,7 +185,7 @@ def caract_model():
     caracteristicas = Caracteristica.query.all()  # Traer todas las características
     modelos = Modelo.query.all()  # Traer todos los modelos
     
-    return render_template('caracterisitas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+    return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
 
 #------------------------ACCESORIOS-MODELOS-----------------------
 @app.route('/accesorios_modelos', methods=['GET', 'POST'])
