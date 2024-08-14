@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -5,10 +7,12 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from celulares import  *
+from forms import AccesorioForm
 
 
 
@@ -128,13 +132,18 @@ def editar_categorias(id):
 #------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
 def accesorios(): 
+    formulario = AccesorioForm()
+
+    accesorio = Accesorio.query.all()
     if request.method == 'POST':
         nombre = request.form['nombre']
         nuevo_accesorio = Accesorio(nombre=nombre)
         db.session.add(nuevo_accesorio)
         db.session.commit()
     accesorios_query = Accesorio.query.all()
-    return render_template('accesorios.html',accesorios = accesorios_query)
+    return render_template(
+        'accesorios.html',accesorio = accesorio, formulario=formulario)
+
 
 @app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
 def editar_accesorio(id):
@@ -188,6 +197,20 @@ def caract_model():
     modelos = Modelo.query.all()  # Traer todos los modelos
     
     return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+
+@app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
+def editar_caract_model(id):
+    accesorio = AccesorioModelo.query.get_or_404(id)
+    caracteristicas = Accesorio.query.all() 
+    modelos = Modelo.query.all()
+    
+    if request.method == 'POST':
+        accesorio.accesorio_id = request.form['accesorio_id']
+        accesorio.modelo_id = request.form['modelo_id']
+        db.session.commit()
+        return redirect(url_for('acces_model'))  # Redirige después de editar
+
+    return render_template('editar_acces_mod.html', accesorio=accesorio, caracteristicas=caracteristicas, modelos=modelos)
 
 #------------------------ACCESORIOS-MODELOS-----------------------
 @app.route('/accesorios_modelos', methods=['GET', 'POST'])
