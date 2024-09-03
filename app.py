@@ -1,15 +1,23 @@
-from flask import Flask, render_template, redirect, request, url_for
+import os 
+from flask import Flask, render_template, redirect, request, url_for,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import  load_dotenv
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+from services.paises_service import PaisService
 from celulares import  *
+from forms import PaisForm
+from repositories.paises_repository import PaisRepository
 
+load_dotenv()
 
 
 #-----------------------EQUIPOS!!! (Index del programa) --------------------------
@@ -53,13 +61,19 @@ def editar_equipos(id):
 
 @app.route("/paises", methods=['POST', 'GET'])
 def paises(): 
+    formulario = PaisForm()
+
     if request.method == 'POST':
         nombre = request.form['nombre']
-        nuevo_pais = Pais(nombre=nombre)
-        db.session.add(nuevo_pais)
-        db.session.commit()
-    paises_query = Pais.query.all()
-    return render_template('paises.html',paises = paises_query)
+        services = PaisService(PaisRepository())
+        paises = services.get_all()
+        services.create(nombre=nombre)    
+    services = PaisService(PaisRepository())
+    paises = services.get_all()
+    return render_template(
+        'paises.html',
+        paises = paises,
+        formulario = formulario)
 
 
 @app.route('/editar/<id>/paises', methods=['GET', 'POST'])
@@ -273,3 +287,19 @@ def editar_proveedor(id):
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
 
+
+
+
+@app.route("/users", methods=['POST'])
+def user(): 
+    data = request.get_json()
+    nombre = data.get('nombre')
+    password = data.get('password')
+    try:
+        nuevo_usuario = Usuario(nombre=nombre, password=password)
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+        return jsonify({'Usuario Creado':nombre}),201    
+    except:
+        return jsonify({'Mensaje': 'Algo salio mal'})    
+    
