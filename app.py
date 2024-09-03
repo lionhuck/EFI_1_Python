@@ -1,20 +1,30 @@
+import bcrypt
 import os
 
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
+
+# Configuracion de SQLALCHEMY
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'SQLALCHEMY_DATABASE_URI'
+) #'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.environ.get(
+    'SECRET_KEY'
+)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from celulares import  *
-from forms import AccesorioForm
+from forms import CategoriaForm
+from servicios.categoria_servicio import CategoriaServicio
+from repositorio.categoria_repositorio import CategoriaRepositorio
 
-
+load_dotenv()
 
 #-----------------------EQUIPOS!!! (Index del programa) --------------------------
 @app.route('/', methods=['GET', 'POST'])
@@ -111,13 +121,20 @@ def editar_modelo(id):
 
 @app.route("/categorias", methods=['POST', 'GET'])
 def categorias(): 
+    formulario = CategoriaForm()
+    
+    services = CategoriaServicio(CategoriaRepositorio)
+    categorias = services.get_all()
+
     if request.method == 'POST':
         nombre = request.form['nombre']
-        nueva_categoria = Categoria(nombre=nombre)
-        db.session.add(nueva_categoria)
-        db.session.commit()
-    categorias_query = Categoria.query.all()
-    return render_template('categorias.html',categorias = categorias_query)
+        services.create(nombre=nombre)
+        return redirect(url_for('categorias')) 
+    
+    return render_template(
+        'categorias.html',
+        categorias = categorias,
+        formulario = formulario)
 
 @app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
 def editar_categorias(id):
@@ -132,17 +149,13 @@ def editar_categorias(id):
 #------------------------ACCESORIOS-----------------------
 @app.route("/accesorios", methods=['POST', 'GET'])
 def accesorios(): 
-    formulario = AccesorioForm()
-
-    accesorio = Accesorio.query.all()
     if request.method == 'POST':
         nombre = request.form['nombre']
         nuevo_accesorio = Accesorio(nombre=nombre)
         db.session.add(nuevo_accesorio)
         db.session.commit()
     accesorios_query = Accesorio.query.all()
-    return render_template(
-        'accesorios.html',accesorio = accesorio, formulario=formulario)
+    return render_template('accesorios.html',accesorios = accesorios_query)
 
 
 @app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
@@ -296,3 +309,21 @@ def editar_proveedor(id):
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
 
+#------------------------PROVEEDORES-----------------------
+@app.route("/users", methods=['POST'])
+def user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    try:
+        new_user = User(
+            username=username, 
+            password=password
+            )
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({"Usuario creado": username}), 201
+    except:
+        return jsonify({"Error" : "Salió mal loco"})
