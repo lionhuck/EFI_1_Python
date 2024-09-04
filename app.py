@@ -4,6 +4,13 @@ import os
 from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import (
+    JWTManager,
+)
+from werkzeug.security import (
+    generate_password_hash, 
+    check_password_hash,
+)
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -18,6 +25,7 @@ app.config['SECRET_KEY'] = os.environ.get(
 )
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+jwt = JWTManager(app)
 
 from celulares import  *
 from forms import CategoriaForm
@@ -315,11 +323,17 @@ def user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-
+    
+    password_hashed = generate_password_hash(
+        password=password,
+        method='pbkdf2',
+        salt_length=8,
+    )
+    #print(password_hashed)
     try:
         new_user = User(
             username=username, 
-            password=password
+            password=password_hashed
             )
         db.session.add(new_user)
         db.session.commit()
@@ -327,3 +341,18 @@ def user():
         return jsonify({"Usuario creado": username}), 201
     except:
         return jsonify({"Error" : "Salió mal loco"})
+
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    usuario = User.query.filter_by(username=username).first()
+
+    if usuario and check_password_hash(
+        pwhash=usuario.password_hash, 
+        password=password,
+    ):
+        return jsonify({"Mensaje":"Usuario Logueado"})
+    return jsonify({"Mensaje":"NO MATCH"})
