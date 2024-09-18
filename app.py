@@ -1,15 +1,44 @@
-from flask import Flask, render_template, redirect, request, url_for
+import bcrypt
+import os
+from datetime import timedelta
+
+
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import (
+    JWTManager,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    create_access_token,
+)
+from werkzeug.security import (
+    generate_password_hash, 
+    check_password_hash,
+)
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
+
+# Configuracion de SQLALCHEMY
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'SQLALCHEMY_DATABASE_URI'
+) #'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.environ.get(
+    'SECRET_KEY'
+)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+jwt = JWTManager(app)
 
 from celulares import  *
-
+from forms import CategoriaForm
+from servicios.categoria_servicio import CategoriaServicio
+from repositorio.categoria_repositorio import CategoriaRepositorio
 
 
 #-----------------------EQUIPOS!!! (Index del programa) --------------------------
@@ -107,13 +136,20 @@ def editar_modelo(id):
 
 @app.route("/categorias", methods=['POST', 'GET'])
 def categorias(): 
+    formulario = CategoriaForm()
+    
+    services = CategoriaServicio(CategoriaRepositorio)
+    categorias = services.get_all()
+
     if request.method == 'POST':
         nombre = request.form['nombre']
-        nueva_categoria = Categoria(nombre=nombre)
-        db.session.add(nueva_categoria)
-        db.session.commit()
-    categorias_query = Categoria.query.all()
-    return render_template('categorias.html',categorias = categorias_query)
+        services.create(nombre=nombre)
+        return redirect(url_for('categorias')) 
+    
+    return render_template(
+        'categorias.html',
+        categorias = categorias,
+        formulario = formulario)
 
 @app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
 def editar_categorias(id):
@@ -135,6 +171,7 @@ def accesorios():
         db.session.commit()
     accesorios_query = Accesorio.query.all()
     return render_template('accesorios.html',accesorios = accesorios_query)
+
 
 @app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
 def editar_accesorio(id):
@@ -188,6 +225,20 @@ def caract_model():
     modelos = Modelo.query.all()  # Traer todos los modelos
     
     return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+
+@app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
+def editar_caract_model(id):
+    accesorio = AccesorioModelo.query.get_or_404(id)
+    caracteristicas = Accesorio.query.all() 
+    modelos = Modelo.query.all()
+    
+    if request.method == 'POST':
+        accesorio.accesorio_id = request.form['accesorio_id']
+        accesorio.modelo_id = request.form['modelo_id']
+        db.session.commit()
+        return redirect(url_for('acces_model'))  # Redirige después de editar
+
+    return render_template('editar_acces_mod.html', accesorio=accesorio, caracteristicas=caracteristicas, modelos=modelos)
 
 #------------------------ACCESORIOS-MODELOS-----------------------
 @app.route('/accesorios_modelos', methods=['GET', 'POST'])
@@ -273,3 +324,49 @@ def editar_proveedor(id):
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
 
+#------------------------PROVEEDORES-----------------------
+@app.route("/users", methods=['POST', 'GET'])
+def user():
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        password_hashed = generate_password_hash(
+            password=password,
+            method='pbkdf2',
+            salt_length=8,
+        )
+        
+        try:
+            new_user = User(
+                username=username, 
+                password_hash=password_hashed,
+                )
+            db.session.add(new_user)
+            db.session.commit()
+
+            return jsonify({"Usuario creado": username}), 201
+        except:
+            return jsonify({"Error" : "Salió mal loco"})
+    return jsonify({"Usuario Creado": "ACA IRIA EL LISTADO"}), 200
+
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.authorization
+    username = data.username
+    password = data.password
+
+    usuario = User.query.filter_by(username=username).first()
+
+    if usuario and check_password_hash(
+        pwhash=usuario.password_hash, 
+        password=password,
+    ):
+        acces_token = create_access_token(
+            identity=username,
+            expires_delta=timedelta(minutes=3)
+        )
+
+        return jsonify({"Mensaje":f"Token {acces_token}"})
+    return jsonify({"Mensaje":"NO MATCH"})
