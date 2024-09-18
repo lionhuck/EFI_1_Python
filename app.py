@@ -1,17 +1,25 @@
 import bcrypt
 import os
+from datetime import timedelta
+
 
 from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import (
     JWTManager,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    create_access_token,
 )
 from werkzeug.security import (
     generate_password_hash, 
     check_password_hash,
 )
 from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -32,7 +40,6 @@ from forms import CategoriaForm
 from servicios.categoria_servicio import CategoriaServicio
 from repositorio.categoria_repositorio import CategoriaRepositorio
 
-load_dotenv()
 
 #-----------------------EQUIPOS!!! (Index del programa) --------------------------
 @app.route('/', methods=['GET', 'POST'])
@@ -318,35 +325,37 @@ def editar_proveedor(id):
     return render_template('editar_proveedores.html', proveedor=proveedor)
 
 #------------------------PROVEEDORES-----------------------
-@app.route("/users", methods=['POST'])
+@app.route("/users", methods=['POST', 'GET'])
 def user():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    
-    password_hashed = generate_password_hash(
-        password=password,
-        method='pbkdf2',
-        salt_length=8,
-    )
-    #print(password_hashed)
-    try:
-        new_user = User(
-            username=username, 
-            password=password_hashed
-            )
-        db.session.add(new_user)
-        db.session.commit()
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        password_hashed = generate_password_hash(
+            password=password,
+            method='pbkdf2',
+            salt_length=8,
+        )
+        
+        try:
+            new_user = User(
+                username=username, 
+                password_hash=password_hashed,
+                )
+            db.session.add(new_user)
+            db.session.commit()
 
-        return jsonify({"Usuario creado": username}), 201
-    except:
-        return jsonify({"Error" : "Salió mal loco"})
+            return jsonify({"Usuario creado": username}), 201
+        except:
+            return jsonify({"Error" : "Salió mal loco"})
+    return jsonify({"Usuario Creado": "ACA IRIA EL LISTADO"}), 200
 
 @app.route("/login", methods=['POST'])
 def login():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    data = request.authorization
+    username = data.username
+    password = data.password
 
     usuario = User.query.filter_by(username=username).first()
 
@@ -354,5 +363,10 @@ def login():
         pwhash=usuario.password_hash, 
         password=password,
     ):
-        return jsonify({"Mensaje":"Usuario Logueado"})
+        acces_token = create_access_token(
+            identity=username,
+            expires_delta=timedelta(minutes=3)
+        )
+
+        return jsonify({"Mensaje":f"Token {acces_token}"})
     return jsonify({"Mensaje":"NO MATCH"})
