@@ -1,25 +1,16 @@
-import bcrypt
 import os
-from datetime import timedelta
 
+from dotenv import load_dotenv
 
-from flask import Flask, render_template, redirect, request, url_for, jsonify
+from flask import Flask
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import (
     JWTManager,
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-    create_access_token,
 )
-from werkzeug.security import (
-    generate_password_hash, 
-    check_password_hash,
-)
-from dotenv import load_dotenv
 
-load_dotenv()
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 
@@ -34,339 +25,299 @@ app.config['SECRET_KEY'] = os.environ.get(
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
+ma = Marshmallow(app)
 
-from celulares import  *
-from forms import CategoriaForm
-from servicios.categoria_servicio import CategoriaServicio
-from repositorio.categoria_repositorio import CategoriaRepositorio
+load_dotenv()
 
+from views import register_bp
+register_bp(app)
 
-#-----------------------EQUIPOS!!! (Index del programa) --------------------------
-@app.route('/', methods=['GET', 'POST'])
-def equipos():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        modelo_id = request.form['modelo_id']
-        categoria_id = request.form['categoria_id']
-        costo = request.form['costo']
-        nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
-        db.session.add(nuevo_equipo)
-        db.session.commit()
-        return redirect(url_for('equipos'))
+# from celulares import  *
+# from forms import CategoriaForm
+# from servicios.categoria_servicio import CategoriaServicio
+# from repositorio.categoria_repositorio import CategoriaRepositorio
+
+# #-----------------------EQUIPOS!!! (Index del programa) --------------------------
+# @app.route('/', methods=['GET', 'POST'])
+# def equipos():
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         modelo_id = request.form['modelo_id']
+#         categoria_id = request.form['categoria_id']
+#         costo = request.form['costo']
+#         nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
+#         db.session.add(nuevo_equipo)
+#         db.session.commit()
+#         return redirect(url_for('equipos'))
     
-    equipos = Equipo.query.all()
-    modelos = Modelo.query.all()
-    categorias = Categoria.query.all()
-    return render_template('equipos.html', equipos=equipos, modelos=modelos, categorias=categorias)
-    
-    
-@app.route('/editar/<id>/equipos', methods=['GET', 'POST'])
-def editar_equipos(id):
-    equipo = Equipo.query.get_or_404(id)
-    modelos = Modelo.query.all()
-    categorias = Categoria.query.all()
-
-    if request.method == 'POST':
-        equipo.nombre = request.form['nombre']
-        equipo.modelo_id = request.form['modelo_id']
-        equipo.categoria_id = request.form['categoria_id']
-        equipo.costo = request.form['costo']
-        db.session.commit()
-        return redirect(url_for('equipos'))  # Redirige después de editar
-
-    return render_template('editar_equipos.html', equipo=equipo, modelos=modelos, categorias=categorias)
-
-
-
-#-----------------------PAISES--------------------------
-
-@app.route("/paises", methods=['POST', 'GET'])
-def paises(): 
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        nuevo_pais = Pais(nombre=nombre)
-        db.session.add(nuevo_pais)
-        db.session.commit()
-    paises_query = Pais.query.all()
-    return render_template('paises.html',paises = paises_query)
-
-
-@app.route('/editar/<id>/paises', methods=['GET', 'POST'])
-def editar_paises(id):
-    pais = Pais.query.get_or_404(id)
-    if request.method == 'POST':
-        pais.nombre = request.form['nombre']
-        db.session.commit()
-        return redirect(url_for('paises'))  # Redirige después de editar
-
-    return render_template('editar_paises.html', pais=pais)
-
-
-
-#-----------------------MODELOS--------------------------
-@app.route('/modelos', methods=['GET', 'POST'])
-def modelos():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        fabricante_id = request.form['fabricante_id']
-        nuevo_modelo = Modelo(nombre=nombre, fabricante_id=fabricante_id)
-        db.session.add(nuevo_modelo)
-        db.session.commit()
-        return redirect(url_for('modelos'))
-    
-    modelos = Modelo.query.all()
-    fabricantes = Fabricante.query.all()
-    return render_template('modelos.html', modelos=modelos, fabricantes=fabricantes)
+#     equipos = Equipo.query.all()
+#     modelos = Modelo.query.all()
+#     categorias = Categoria.query.all()
+#     return render_template('equipos.html', equipos=equipos, modelos=modelos, categorias=categorias)
     
     
-@app.route('/editar/<id>/modelos', methods=['GET', 'POST'])
-def editar_modelo(id):
-    modelo = Modelo.query.get_or_404(id)
-    fabricantes = Fabricante.query.all()
+# @app.route('/editar/<id>/equipos', methods=['GET', 'POST'])
+# def editar_equipos(id):
+#     equipo = Equipo.query.get_or_404(id)
+#     modelos = Modelo.query.all()
+#     categorias = Categoria.query.all()
 
-    if request.method == 'POST':
-        modelo.nombre = request.form['nombre']
-        modelo.modelo_id = request.form['fabricante_id']
-        db.session.commit()
-        return redirect(url_for('modelos'))  # Redirige después de editar
+#     if request.method == 'POST':
+#         equipo.nombre = request.form['nombre']
+#         equipo.modelo_id = request.form['modelo_id']
+#         equipo.categoria_id = request.form['categoria_id']
+#         equipo.costo = request.form['costo']
+#         db.session.commit()
+#         return redirect(url_for('equipos'))  # Redirige después de editar
 
-    return render_template('editar_modelos.html', modelo=modelo, fabricantes=fabricantes)
+#     return render_template('editar_equipos.html', equipo=equipo, modelos=modelos, categorias=categorias)
 
-#-----------------------CATEGORIAS--------------------------
 
-@app.route("/categorias", methods=['POST', 'GET'])
-def categorias(): 
-    formulario = CategoriaForm()
+
+# #-----------------------PAISES--------------------------
+
+# @app.route("/paises", methods=['POST', 'GET'])
+# def paises(): 
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         nuevo_pais = Pais(nombre=nombre)
+#         db.session.add(nuevo_pais)
+#         db.session.commit()
+#     paises_query = Pais.query.all()
+#     return render_template('paises.html',paises = paises_query)
+
+
+# @app.route('/editar/<id>/paises', methods=['GET', 'POST'])
+# def editar_paises(id):
+#     pais = Pais.query.get_or_404(id)
+#     if request.method == 'POST':
+#         pais.nombre = request.form['nombre']
+#         db.session.commit()
+#         return redirect(url_for('paises'))  # Redirige después de editar
+
+#     return render_template('editar_paises.html', pais=pais)
+
+
+
+# #-----------------------MODELOS--------------------------
+# @app.route('/modelos', methods=['GET', 'POST'])
+# def modelos():
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         fabricante_id = request.form['fabricante_id']
+#         nuevo_modelo = Modelo(nombre=nombre, fabricante_id=fabricante_id)
+#         db.session.add(nuevo_modelo)
+#         db.session.commit()
+#         return redirect(url_for('modelos'))
     
-    services = CategoriaServicio(CategoriaRepositorio)
-    categorias = services.get_all()
-
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        services.create(nombre=nombre)
-        return redirect(url_for('categorias')) 
+#     modelos = Modelo.query.all()
+#     fabricantes = Fabricante.query.all()
+#     return render_template('modelos.html', modelos=modelos, fabricantes=fabricantes)
     
-    return render_template(
-        'categorias.html',
-        categorias = categorias,
-        formulario = formulario)
-
-@app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
-def editar_categorias(id):
-    categoria = Categoria.query.get_or_404(id)
-    if request.method == 'POST':
-        categoria.nombre = request.form['nombre']
-        db.session.commit()
-        return redirect(url_for('categorias'))  # Redirige después de editar
-
-    return render_template('editar_categorias.html', categoria = categoria)
     
-#------------------------ACCESORIOS-----------------------
-@app.route("/accesorios", methods=['POST', 'GET'])
-def accesorios(): 
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        nuevo_accesorio = Accesorio(nombre=nombre)
-        db.session.add(nuevo_accesorio)
-        db.session.commit()
-    accesorios_query = Accesorio.query.all()
-    return render_template('accesorios.html',accesorios = accesorios_query)
+# @app.route('/editar/<id>/modelos', methods=['GET', 'POST'])
+# def editar_modelo(id):
+#     modelo = Modelo.query.get_or_404(id)
+#     fabricantes = Fabricante.query.all()
 
+#     if request.method == 'POST':
+#         modelo.nombre = request.form['nombre']
+#         modelo.modelo_id = request.form['fabricante_id']
+#         db.session.commit()
+#         return redirect(url_for('modelos'))  # Redirige después de editar
 
-@app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
-def editar_accesorio(id):
-    accesorio = Accesorio.query.get_or_404(id)
+#     return render_template('editar_modelos.html', modelo=modelo, fabricantes=fabricantes)
+
+# #-----------------------CATEGORIAS--------------------------
+
+# @app.route("/categorias", methods=['POST', 'GET'])
+# def categorias(): 
+#     formulario = CategoriaForm()
     
-    if request.method == 'POST':
-        accesorio.nombre = request.form['nombre']
-        db.session.commit()
-        return redirect(url_for('accesorios'))  # Redirige después de editar
+#     services = CategoriaServicio(CategoriaRepositorio)
+#     categorias = services.get_all()
 
-    return render_template('editar_accesorios.html', accesorio = accesorio)
-
-#------------------------CARACTERISTICAS-----------------------
-@app.route("/caracteristicas", methods=['POST', 'GET'])
-def caracteristicas(): 
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        descripcion = request.form['descripcion']
-        nueva_caracteristica = Caracteristica(nombre=nombre,descripcion=descripcion)
-        db.session.add(nueva_caracteristica)
-        db.session.commit()
-        return redirect(url_for('caracteristicas'))  # Redirige después de editar
-    caracteristicas = Caracteristica.query.all()
-    return render_template('caracteristicas.html', caracteristicas = caracteristicas)
-
-@app.route('/editar/<id>/caracteristicas', methods=['GET', 'POST'])
-def editar_caracteristica(id):
-    caracteristica = Caracteristica.query.get_or_404(id)
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         services.create(nombre=nombre)
+#         return redirect(url_for('categorias')) 
     
-    if request.method == 'POST':
-        caracteristica.nombre = request.form['nombre']
-        caracteristica.descripcion = request.form['descripcion']
-        db.session.commit()
-        return redirect(url_for('caracteristicas'))  # Redirige después de editar
+#     return render_template(
+#         'categorias.html',
+#         categorias = categorias,
+#         formulario = formulario)
 
-    return render_template('editar_caracteristicas.html', caracteristica=caracteristica)
+# @app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
+# def editar_categorias(id):
+#     categoria = Categoria.query.get_or_404(id)
+#     if request.method == 'POST':
+#         categoria.nombre = request.form['nombre']
+#         db.session.commit()
+#         return redirect(url_for('categorias'))  # Redirige después de editar
 
-#------------------------CARACTERISTICAS-MODELOS-----------------------
-@app.route('/caracteristicas_modelos', methods=['GET', 'POST'])
-def caract_model():
-    if request.method == 'POST':
-        caracteristica_id = request.form['caracteristica_id']
-        modelo_id = request.form['modelo_id']
-        nuevo_caract_model = CaracteristicaModelo(modelo_id=modelo_id, caracteristica_id=caracteristica_id)
-        db.session.add(nuevo_caract_model)
-        db.session.commit()
-        return redirect(url_for('caract_model'))
-
-    caracts_models = CaracteristicaModelo.query.all()
-    caracteristicas = Caracteristica.query.all()  # Traer todas las características
-    modelos = Modelo.query.all()  # Traer todos los modelos
+#     return render_template('editar_categorias.html', categoria = categoria)
     
-    return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
+# #------------------------ACCESORIOS-----------------------
+# @app.route("/accesorios", methods=['POST', 'GET'])
+# def accesorios(): 
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         nuevo_accesorio = Accesorio(nombre=nombre)
+#         db.session.add(nuevo_accesorio)
+#         db.session.commit()
+#     accesorios_query = Accesorio.query.all()
+#     return render_template('accesorios.html',accesorios = accesorios_query)
 
-@app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
-def editar_caract_model(id):
-    accesorio = AccesorioModelo.query.get_or_404(id)
-    caracteristicas = Accesorio.query.all() 
-    modelos = Modelo.query.all()
+
+# @app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
+# def editar_accesorio(id):
+#     accesorio = Accesorio.query.get_or_404(id)
     
-    if request.method == 'POST':
-        accesorio.accesorio_id = request.form['accesorio_id']
-        accesorio.modelo_id = request.form['modelo_id']
-        db.session.commit()
-        return redirect(url_for('acces_model'))  # Redirige después de editar
+#     if request.method == 'POST':
+#         accesorio.nombre = request.form['nombre']
+#         db.session.commit()
+#         return redirect(url_for('accesorios'))  # Redirige después de editar
 
-    return render_template('editar_acces_mod.html', accesorio=accesorio, caracteristicas=caracteristicas, modelos=modelos)
+#     return render_template('editar_accesorios.html', accesorio = accesorio)
 
-#------------------------ACCESORIOS-MODELOS-----------------------
-@app.route('/accesorios_modelos', methods=['GET', 'POST'])
-def acces_model():
-    if request.method == 'POST':
-        accesorio_id = request.form['accesorio_id']
-        modelo_id = request.form['modelo_id']
-        nuevo_acces_model = AccesorioModelo(accesorio_id = accesorio_id, modelo_id = modelo_id)
-        db.session.add(nuevo_acces_model)
-        db.session.commit()
-        return redirect(url_for('acces_model'))
+# #------------------------CARACTERISTICAS-----------------------
+# @app.route("/caracteristicas", methods=['POST', 'GET'])
+# def caracteristicas(): 
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         descripcion = request.form['descripcion']
+#         nueva_caracteristica = Caracteristica(nombre=nombre,descripcion=descripcion)
+#         db.session.add(nueva_caracteristica)
+#         db.session.commit()
+#         return redirect(url_for('caracteristicas'))  # Redirige después de editar
+#     caracteristicas = Caracteristica.query.all()
+#     return render_template('caracteristicas.html', caracteristicas = caracteristicas)
 
-    acces_models = AccesorioModelo.query.all()
-    accesorios = Accesorio.query.all()  # Traer todos los accesorios
-    modelos = Modelo.query.all()  # Traer todos los modelos
+# @app.route('/editar/<id>/caracteristicas', methods=['GET', 'POST'])
+# def editar_caracteristica(id):
+#     caracteristica = Caracteristica.query.get_or_404(id)
     
-    return render_template('accesorios_modelos.html', acces_models=acces_models, accesorios=accesorios, modelos=modelos)
+#     if request.method == 'POST':
+#         caracteristica.nombre = request.form['nombre']
+#         caracteristica.descripcion = request.form['descripcion']
+#         db.session.commit()
+#         return redirect(url_for('caracteristicas'))  # Redirige después de editar
 
-@app.route('/editar/<id>/accesorios_modelos', methods=['GET', 'POST'])
-def editar_acces_model(id):
-    accesorio = AccesorioModelo.query.get_or_404(id)
-    accesorios = Accesorio.query.all() 
-    modelos = Modelo.query.all()
+#     return render_template('editar_caracteristicas.html', caracteristica=caracteristica)
+
+# #------------------------CARACTERISTICAS-MODELOS-----------------------
+# @app.route('/caracteristicas_modelos', methods=['GET', 'POST'])
+# def caract_model():
+#     if request.method == 'POST':
+#         caracteristica_id = request.form['caracteristica_id']
+#         modelo_id = request.form['modelo_id']
+#         nuevo_caract_model = CaracteristicaModelo(modelo_id=modelo_id, caracteristica_id=caracteristica_id)
+#         db.session.add(nuevo_caract_model)
+#         db.session.commit()
+#         return redirect(url_for('caract_model'))
+
+#     caracts_models = CaracteristicaModelo.query.all()
+#     caracteristicas = Caracteristica.query.all()  # Traer todas las características
+#     modelos = Modelo.query.all()  # Traer todos los modelos
     
-    if request.method == 'POST':
-        accesorio.accesorio_id = request.form['accesorio_id']
-        accesorio.modelo_id = request.form['modelo_id']
-        db.session.commit()
-        return redirect(url_for('acces_model'))  # Redirige después de editar
+#     return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
 
-    return render_template('editar_acces_mod.html', accesorio=accesorio, accesorios=accesorios, modelos=modelos)
-
-#-----------------------FABRICANTES-----------------------
-@app.route('/fabricantes', methods=['GET', 'POST'])
-def fabricantes():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        pais_id = request.form['pais_id']
-        nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
-        db.session.add(nuevo_fabricante)
-        db.session.commit()
-        return redirect(url_for('fabricantes'))  # Redirige para evitar el duplicado en caso de recarga
-
-    fabricantes = Fabricante.query.all()
-    paises = Pais.query.all()
-    return render_template('fabricantes.html', fabricantes=fabricantes, paises=paises)
-
-@app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
-def editar_fabricante(id):
-    fabricante = Fabricante.query.get_or_404(id)
-    paises = Pais.query.all()
+# @app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
+# def editar_caract_model(id):
+#     accesorio = AccesorioModelo.query.get_or_404(id)
+#     caracteristicas = Accesorio.query.all() 
+#     modelos = Modelo.query.all()
     
-    if request.method == 'POST':
-        fabricante.nombre = request.form['nombre']
-        fabricante.pais_id = request.form['pais_id']
-        db.session.commit()
-        return redirect(url_for('fabricantes'))  # Redirige después de editar
+#     if request.method == 'POST':
+#         accesorio.accesorio_id = request.form['accesorio_id']
+#         accesorio.modelo_id = request.form['modelo_id']
+#         db.session.commit()
+#         return redirect(url_for('acces_model'))  # Redirige después de editar
 
-    return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
+#     return render_template('editar_acces_mod.html', accesorio=accesorio, caracteristicas=caracteristicas, modelos=modelos)
 
-#------------------------PROVEEDORES-----------------------
-@app.route("/proveedores", methods=['POST', 'GET'])
-def proveedores(): 
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        cuit = request.form['cuit']
-        nuevo_proveedor = Proveedor(nombre=nombre,cuit=cuit)
-        db.session.add(nuevo_proveedor)
-        db.session.commit()
-        return redirect(url_for('proveedores'))  # Redirige después de editar
-    proveedores = Proveedor.query.all()
-    return render_template('proveedores.html', proveedores = proveedores)
+# #------------------------ACCESORIOS-MODELOS-----------------------
+# @app.route('/accesorios_modelos', methods=['GET', 'POST'])
+# def acces_model():
+#     if request.method == 'POST':
+#         accesorio_id = request.form['accesorio_id']
+#         modelo_id = request.form['modelo_id']
+#         nuevo_acces_model = AccesorioModelo(accesorio_id = accesorio_id, modelo_id = modelo_id)
+#         db.session.add(nuevo_acces_model)
+#         db.session.commit()
+#         return redirect(url_for('acces_model'))
 
-@app.route('/editar/<id>/proveedores', methods=['GET', 'POST'])
-def editar_proveedor(id):
-    proveedor = Proveedor.query.get_or_404(id)
+#     acces_models = AccesorioModelo.query.all()
+#     accesorios = Accesorio.query.all()  # Traer todos los accesorios
+#     modelos = Modelo.query.all()  # Traer todos los modelos
     
-    if request.method == 'POST':
-        proveedor.nombre = request.form['nombre']
-        proveedor.cuit= request.form['cuit']
-        db.session.commit()
-        return redirect(url_for('proveedores'))  # Redirige después de editar
+#     return render_template('accesorios_modelos.html', acces_models=acces_models, accesorios=accesorios, modelos=modelos)
 
-    return render_template('editar_proveedores.html', proveedor=proveedor)
+# @app.route('/editar/<id>/accesorios_modelos', methods=['GET', 'POST'])
+# def editar_acces_model(id):
+#     accesorio = AccesorioModelo.query.get_or_404(id)
+#     accesorios = Accesorio.query.all() 
+#     modelos = Modelo.query.all()
+    
+#     if request.method == 'POST':
+#         accesorio.accesorio_id = request.form['accesorio_id']
+#         accesorio.modelo_id = request.form['modelo_id']
+#         db.session.commit()
+#         return redirect(url_for('acces_model'))  # Redirige después de editar
 
-#------------------------PROVEEDORES-----------------------
-@app.route("/users", methods=['POST', 'GET'])
-def user():
-    if request.method == 'POST':
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
-        
-        password_hashed = generate_password_hash(
-            password=password,
-            method='pbkdf2',
-            salt_length=8,
-        )
-        
-        try:
-            new_user = User(
-                username=username, 
-                password_hash=password_hashed,
-                )
-            db.session.add(new_user)
-            db.session.commit()
+#     return render_template('editar_acces_mod.html', accesorio=accesorio, accesorios=accesorios, modelos=modelos)
 
-            return jsonify({"Usuario creado": username}), 201
-        except:
-            return jsonify({"Error" : "Salió mal loco"})
-    return jsonify({"Usuario Creado": "ACA IRIA EL LISTADO"}), 200
+# #-----------------------FABRICANTES-----------------------
+# @app.route('/fabricantes', methods=['GET', 'POST'])
+# def fabricantes():
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         pais_id = request.form['pais_id']
+#         nuevo_fabricante = Fabricante(nombre=nombre, pais_id=pais_id)
+#         db.session.add(nuevo_fabricante)
+#         db.session.commit()
+#         return redirect(url_for('fabricantes'))  # Redirige para evitar el duplicado en caso de recarga
 
-@app.route("/login", methods=['POST'])
-def login():
-    data = request.authorization
-    username = data.username
-    password = data.password
+#     fabricantes = Fabricante.query.all()
+#     paises = Pais.query.all()
+#     return render_template('fabricantes.html', fabricantes=fabricantes, paises=paises)
 
-    usuario = User.query.filter_by(username=username).first()
+# @app.route('/editar/<id>/fabricantes', methods=['GET', 'POST'])
+# def editar_fabricante(id):
+#     fabricante = Fabricante.query.get_or_404(id)
+#     paises = Pais.query.all()
+    
+#     if request.method == 'POST':
+#         fabricante.nombre = request.form['nombre']
+#         fabricante.pais_id = request.form['pais_id']
+#         db.session.commit()
+#         return redirect(url_for('fabricantes'))  # Redirige después de editar
 
-    if usuario and check_password_hash(
-        pwhash=usuario.password_hash, 
-        password=password,
-    ):
-        acces_token = create_access_token(
-            identity=username,
-            expires_delta=timedelta(minutes=3)
-        )
+#     return render_template('editar_fabricantes.html', fabricante=fabricante, paises=paises)
 
-        return jsonify({"Mensaje":f"Token {acces_token}"})
-    return jsonify({"Mensaje":"NO MATCH"})
+# #------------------------PROVEEDORES-----------------------
+# @app.route("/proveedores", methods=['POST', 'GET'])
+# def proveedores(): 
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         cuit = request.form['cuit']
+#         nuevo_proveedor = Proveedor(nombre=nombre,cuit=cuit)
+#         db.session.add(nuevo_proveedor)
+#         db.session.commit()
+#         return redirect(url_for('proveedores'))  # Redirige después de editar
+#     proveedores = Proveedor.query.all()
+#     return render_template('proveedores.html', proveedores = proveedores)
+
+# @app.route('/editar/<id>/proveedores', methods=['GET', 'POST'])
+# def editar_proveedor(id):
+#     proveedor = Proveedor.query.get_or_404(id)
+    
+#     if request.method == 'POST':
+#         proveedor.nombre = request.form['nombre']
+#         proveedor.cuit= request.form['cuit']
+#         db.session.commit()
+#         return redirect(url_for('proveedores'))  # Redirige después de editar
+
+#     return render_template('editar_proveedores.html', proveedor=proveedor)
+
+# #------------------------PROVEEDORES-----------------------
