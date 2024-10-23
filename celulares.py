@@ -66,10 +66,3 @@ class AccesorioModelo(db.Model):
 class Pais(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    password_hash = db.Column(db.String(300), nullable=False)
-    is_admin = db.Column(db.Boolean(0))

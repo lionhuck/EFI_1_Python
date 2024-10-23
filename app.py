@@ -1,54 +1,29 @@
-import os
-
-from dotenv import load_dotenv
-
-from flask import Flask
-
+from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import (
-    JWTManager,
-)
-
-from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
-
-# Configuracion de SQLALCHEMY
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'SQLALCHEMY_DATABASE_URI'
-) #'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/celulares' # chequear a donde manda la informacion con respecto a la base de datos no encontrada de celulares.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get(
-    'SECRET_KEY'
-)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-jwt = JWTManager(app)
-ma = Marshmallow(app)
 
-load_dotenv()
+from celulares import  *
 
-from views import register_bp
-register_bp(app)
 
-# from celulares import  *
-# from forms import CategoriaForm
-# from servicios.categoria_servicio import CategoriaServicio
-# from repositorio.categoria_repositorio import CategoriaRepositorio
 
-# #-----------------------EQUIPOS!!! (Index del programa) --------------------------
-# @app.route('/', methods=['GET', 'POST'])
-# def equipos():
-#     if request.method == 'POST':
-#         nombre = request.form['nombre']
-#         modelo_id = request.form['modelo_id']
-#         categoria_id = request.form['categoria_id']
-#         costo = request.form['costo']
-#         nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
-#         db.session.add(nuevo_equipo)
-#         db.session.commit()
-#         return redirect(url_for('equipos'))
+#-----------------------EQUIPOS!!! (Index del programa) --------------------------
+@app.route('/', methods=['GET', 'POST'])
+def equipos():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        modelo_id = request.form['modelo_id']
+        categoria_id = request.form['categoria_id']
+        costo = request.form['costo']
+        nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
+        db.session.add(nuevo_equipo)
+        db.session.commit()
+        return redirect(url_for('equipos'))
     
 #     equipos = Equipo.query.all()
 #     modelos = Modelo.query.all()
@@ -76,15 +51,15 @@ register_bp(app)
 
 # #-----------------------PAISES--------------------------
 
-# @app.route("/paises", methods=['POST', 'GET'])
-# def paises(): 
-#     if request.method == 'POST':
-#         nombre = request.form['nombre']
-#         nuevo_pais = Pais(nombre=nombre)
-#         db.session.add(nuevo_pais)
-#         db.session.commit()
-#     paises_query = Pais.query.all()
-#     return render_template('paises.html',paises = paises_query)
+@app.route("/paises", methods=['POST', 'GET'])
+def paises(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nuevo_pais = Pais(nombre=nombre)
+        db.session.add(nuevo_pais)
+        db.session.commit()
+    paises_query = Pais.query.all()
+    return render_template('paises.html',paises = paises_query)
 
 
 # @app.route('/editar/<id>/paises', methods=['GET', 'POST'])
@@ -130,22 +105,15 @@ register_bp(app)
 
 # #-----------------------CATEGORIAS--------------------------
 
-# @app.route("/categorias", methods=['POST', 'GET'])
-# def categorias(): 
-#     formulario = CategoriaForm()
-    
-#     services = CategoriaServicio(CategoriaRepositorio)
-#     categorias = services.get_all()
-
-#     if request.method == 'POST':
-#         nombre = request.form['nombre']
-#         services.create(nombre=nombre)
-#         return redirect(url_for('categorias')) 
-    
-#     return render_template(
-#         'categorias.html',
-#         categorias = categorias,
-#         formulario = formulario)
+@app.route("/categorias", methods=['POST', 'GET'])
+def categorias(): 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        nueva_categoria = Categoria(nombre=nombre)
+        db.session.add(nueva_categoria)
+        db.session.commit()
+    categorias_query = Categoria.query.all()
+    return render_template('categorias.html',categorias = categorias_query)
 
 # @app.route('/editar/<id>/categorias', methods=['GET', 'POST'])
 # def editar_categorias(id):
@@ -168,10 +136,9 @@ register_bp(app)
 #     accesorios_query = Accesorio.query.all()
 #     return render_template('accesorios.html',accesorios = accesorios_query)
 
-
-# @app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
-# def editar_accesorio(id):
-#     accesorio = Accesorio.query.get_or_404(id)
+@app.route('/editar/<id>/accesorios', methods=['GET', 'POST'])
+def editar_accesorio(id):
+    accesorio = Accesorio.query.get_or_404(id)
     
 #     if request.method == 'POST':
 #         accesorio.nombre = request.form['nombre']
@@ -222,30 +189,16 @@ register_bp(app)
     
 #     return render_template('caracteristicas_modelos.html', caracts_models=caracts_models, caracteristicas=caracteristicas, modelos=modelos)
 
-# @app.route('/editar/<id>/caracteristicas_modelos', methods=['GET', 'POST'])
-# def editar_caract_model(id):
-#     accesorio = AccesorioModelo.query.get_or_404(id)
-#     caracteristicas = Accesorio.query.all() 
-#     modelos = Modelo.query.all()
-    
-#     if request.method == 'POST':
-#         accesorio.accesorio_id = request.form['accesorio_id']
-#         accesorio.modelo_id = request.form['modelo_id']
-#         db.session.commit()
-#         return redirect(url_for('acces_model'))  # Redirige después de editar
-
-#     return render_template('editar_acces_mod.html', accesorio=accesorio, caracteristicas=caracteristicas, modelos=modelos)
-
-# #------------------------ACCESORIOS-MODELOS-----------------------
-# @app.route('/accesorios_modelos', methods=['GET', 'POST'])
-# def acces_model():
-#     if request.method == 'POST':
-#         accesorio_id = request.form['accesorio_id']
-#         modelo_id = request.form['modelo_id']
-#         nuevo_acces_model = AccesorioModelo(accesorio_id = accesorio_id, modelo_id = modelo_id)
-#         db.session.add(nuevo_acces_model)
-#         db.session.commit()
-#         return redirect(url_for('acces_model'))
+#------------------------ACCESORIOS-MODELOS-----------------------
+@app.route('/accesorios_modelos', methods=['GET', 'POST'])
+def acces_model():
+    if request.method == 'POST':
+        accesorio_id = request.form['accesorio_id']
+        modelo_id = request.form['modelo_id']
+        nuevo_acces_model = AccesorioModelo(accesorio_id = accesorio_id, modelo_id = modelo_id)
+        db.session.add(nuevo_acces_model)
+        db.session.commit()
+        return redirect(url_for('acces_model'))
 
 #     acces_models = AccesorioModelo.query.all()
 #     accesorios = Accesorio.query.all()  # Traer todos los accesorios
@@ -318,6 +271,6 @@ register_bp(app)
 #         db.session.commit()
 #         return redirect(url_for('proveedores'))  # Redirige después de editar
 
-#     return render_template('editar_proveedores.html', proveedor=proveedor)
+    return render_template('editar_proveedores.html', proveedor=proveedor)
 
 # #------------------------PROVEEDORES-----------------------
