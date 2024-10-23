@@ -26,7 +26,7 @@
                         <td>{{ equipo.categoria.nombre }}</td>
                         <td>{{ equipo.costo }}</td>
                         <td>
-                            <a href="{{ url_for('editar_equipos', id=equipo.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{{ url_for('auth.editar_equipos', id=equipo.id) }}" class="btn btn-warning btn-sm">Editar</a>
                             <form action="#" method="POST" style="display:inline-block;">
                                 <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
