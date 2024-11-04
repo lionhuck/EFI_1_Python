@@ -24,10 +24,11 @@ auth_bp = Blueprint('auth',__name__)
 @auth_bp.route("/users", methods=['POST', 'GET'])
 @jwt_required()
 def user(): 
-    print(get_jwt_identity())
+    print(request.get_json)
     additional_data =get_jwt()
     administrador = additional_data.get('administrador') 
     if request.method == 'POST':
+
         data = request.get_json()
         nombre = data.get('nombre')
         password = data.get('password')
@@ -83,7 +84,7 @@ def login():
                 administrador=usuario.is_admin
             ),
         )
-        return jsonify({"Mensaje": f"Token {acces_token}"})
+        return jsonify({"Token": f"{acces_token}"})
     else:
         return jsonify({"Mensaje": "Usuario o contraseña incorrectos"}), 401
 

@@ -48,9 +48,6 @@ class EquipoSchema(ma.SQLAlchemySchema):
     def validate_costo(self, value):
         if value < 0: 
             raise ValidationError(
-                'el costo no puede ser menor a 0'
+                'el costo no puede se0r menor a 0'
                                   )
-    
-    #modelo = ma.Nested(ModeloSchema)
-    #categoria = ma.Nested(CategoriaSchema)
     
