@@ -40,7 +40,7 @@ class CategoriaSchema(ma.SQLAlchemySchema):
 class EquipoSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Equipo
-
+    id = ma.auto_field()
     nombre = ma.auto_field()
     costo = ma.auto_field()
     
@@ -51,3 +51,8 @@ class EquipoSchema(ma.SQLAlchemySchema):
                 'el costo no puede ser menor a 0'
                                   )
     
+
+class MinimalEquipoSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Equipo
+    nombre = ma.auto_field()
