@@ -30,20 +30,22 @@ def equipos():
     additional_data =get_jwt()
     administrador = additional_data.get('administrador') 
     if request.method == 'POST':
-        data = request.get_json()
-        errors = EquipoSchema().validate(data)
-        if errors:
-            return make_response(jsonify(errors))
+        if administrador:
+            data = request.get_json()
+            errors = EquipoSchema().validate(data)
+            if errors:
+                return make_response(jsonify(errors))
+            else:
+
+                nombre = data.get('nombre')
+                modelo_id = data.get('modelo_id')
+                categoria_id = data.get('categoria_id')
+                costo = data.get('costo')
+                nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
+                db.session.add(nuevo_equipo)
+                db.session.commit()
         else:
-
-            nombre = data.get('nombre')
-            modelo_id = data.get('modelo_id')
-            categoria_id = data.get('categoria_id')
-            costo = data.get('costo')
-            nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
-            db.session.add(nuevo_equipo)
-            db.session.commit()
-
+            return {"mensaje": "No tiene permisos"}
     equipos = Equipo.query.all()
     if administrador:
         return EquipoSchema().dump(obj=equipos, many=True)
@@ -57,15 +59,17 @@ def editar_equipo(id):
     administrador = additional_data.get('administrador') 
     equipo = Equipo.query.get_or_404(id)
     if request.method == 'POST':
-        data = request.get_json()
-        errors = EquipoSchema().validate(data)
-        if errors:
-            return make_response(jsonify(errors))
+        if administrador:
+            data = request.get_json()
+            errors = EquipoSchema().validate(data)
+            if errors:
+                return make_response(jsonify(errors))
+            else:
+                equipo.nombre = data.get('nombre')
+                equipo.costo = data.get('costo')
+                db.session.commit()
         else:
-            equipo.nombre = data.get('nombre')
-            equipo.costo = data.get('costo')
-            db.session.commit()
-
+            return {"mensaje": "No tiene permisos"}
     equipos = Equipo.query.all()
     if administrador:
         return EquipoSchema().dump(obj=equipos, many=True)
