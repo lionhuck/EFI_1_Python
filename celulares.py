@@ -6,7 +6,7 @@ class Equipo(db.Model):
     modelo_id = db.Column(db.Integer, db.ForeignKey('modelo.id'), nullable=False)    
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=False)
     costo = db.Column(db.Integer, nullable=False)
-    activo = db.Column(db.Boolean, nullable=False)
+    activo = db.Column(db.Boolean, nullable=False, default=True)
 
     modelo = db.relationship('Modelo', backref=db.backref('equipos', lazy=True))
     categoria = db.relationship('Categoria', backref=db.backref('equipos', lazy=True))       

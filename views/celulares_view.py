@@ -40,11 +40,10 @@ def equipos():
             modelo_id = data.get('modelo_id')
             categoria_id = data.get('categoria_id')
             costo = data.get('costo')
-            activo = True
-            nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo,activo=activo)
+            nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
             db.session.add(nuevo_equipo)
             db.session.commit()
-        
+
     equipos = Equipo.query.all()
     if administrador:
         return EquipoSchema().dump(obj=equipos, many=True)
@@ -52,7 +51,10 @@ def equipos():
         return MinimalEquipoSchema().dump(obj=equipos, many=True)
 
 @celulares_bp.route('/editar/<id>/equipo', methods=['GET', 'POST'])
+@jwt_required()
 def editar_equipo(id):
+    additional_data =get_jwt()  
+    administrador = additional_data.get('administrador') 
     equipo = Equipo.query.get_or_404(id)
     if request.method == 'POST':
         data = request.get_json()
@@ -65,4 +67,28 @@ def editar_equipo(id):
             db.session.commit()
 
     equipos = Equipo.query.all()
-    return EquipoSchema().dump(equipos, many=True)
+    if administrador:
+        return EquipoSchema().dump(obj=equipos, many=True)
+    else:
+        return MinimalEquipoSchema().dump(obj=equipos, many=True)
+
+
+@celulares_bp.route('/eliminar/<id>/equipo', methods=['GET', 'POST'])
+@jwt_required()
+def eliminar_equipo(id):
+    additional_data =get_jwt()
+    administrador = additional_data.get('administrador') 
+    equipo = Equipo.query.get_or_404(id)
+    if request.method == 'POST':
+        if administrador:
+            equipo.activo = False
+            db.session.commit()
+        else:
+            return {"mensaje": "No tiene permisos"}
+
+    equipos = Equipo.query.all()
+    if administrador:
+        return EquipoSchema().dump(obj=equipos, many=True)
+    else:
+        return MinimalEquipoSchema().dump(obj=equipos, many=True) 
+        
