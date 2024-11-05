@@ -43,8 +43,8 @@ class EquipoSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
     costo = ma.auto_field()
-    modelo_id = ma.auto_field()
-    categoria_id = ma.auto_field()
+    modelo_id = ma.auto_field(required=False)
+    categoria_id = ma.auto_field(required=False)
     activo = ma.auto_field()
     
     @validates('costo')
