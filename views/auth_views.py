@@ -79,7 +79,7 @@ def login():
         
         acces_token = create_access_token(
             identity=nombre,
-            expires_delta=timedelta(minutes=10),
+            expires_delta=timedelta(hours=2),
             additional_claims=dict(
                 administrador=usuario.is_admin
             ),
@@ -360,7 +360,5 @@ def editar_proveedor(id):
         return redirect(url_for('auth.proveedores'))  # Redirige después de editar
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
-
-
 
 

@@ -26,3 +26,17 @@ def equipos():
 
     equipos = Equipo.query.all()
     return EquipoSchema().dump(equipos, many=True)
+
+
+@celulares_bp.route('/editar/<id>/modelos', methods=['GET', 'POST'])
+def editar_modelo(id):
+    modelo = Modelo.query.get_or_404(id)
+    if request.method == 'POST':
+        data = request.get_json()
+        errors = EquipoSchema().validate(data)
+        if errors:
+            return make_response(jsonify(errors))
+        return {}
+
+    equipos = Equipo.query.all()
+    return EquipoSchema().dump(equipos, many=True)
