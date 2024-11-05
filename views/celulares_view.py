@@ -24,10 +24,6 @@ def categoria():
     return CategoriaSchema().dump(categoria, many=True)
 
 
-
-
-
-
 @celulares_bp.route('/equipos', methods=['GET','POST'])
 @jwt_required()
 def equipos():
@@ -38,9 +34,17 @@ def equipos():
         errors = EquipoSchema().validate(data)
         if errors:
             return make_response(jsonify(errors))
-        return {"mensaje":"tuviste exito"}
+        else:
 
-    
+            nombre = data.get('nombre')
+            modelo_id = data.get('modelo_id')
+            categoria_id = data.get('categoria_id')
+            costo = data.get('costo')
+            activo = True
+            nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo,activo=activo)
+            db.session.add(nuevo_equipo)
+            db.session.commit()
+        
     equipos = Equipo.query.all()
     if administrador:
         return EquipoSchema().dump(obj=equipos, many=True)

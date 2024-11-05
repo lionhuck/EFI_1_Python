@@ -43,6 +43,9 @@ class EquipoSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
     costo = ma.auto_field()
+    modelo_id = ma.auto_field()
+    categoria_id = ma.auto_field()
+    activo = ma.auto_field()
     
     @validates('costo')
     def validate_costo(self, value):
@@ -56,3 +59,4 @@ class MinimalEquipoSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Equipo
     nombre = ma.auto_field()
+    costo = ma.auto_field()
