@@ -1,7 +1,15 @@
 from flask import Blueprint, request, make_response,jsonify
+from flask_jwt_extended import (
+    JWTManager,
+    jwt_required,
+    get_jwt_identity,
+    get_jwt,
+    create_access_token
+    )  
 
+from app import *
 from celulares import Modelo, Categoria, Equipo
-from schemas import ModeloSchema, CategoriaSchema, EquipoSchema
+from schemas import ModeloSchema, CategoriaSchema, EquipoSchema, MinimalEquipoSchema
 
 celulares_bp = Blueprint('celulares',__name__)
 
@@ -15,14 +23,42 @@ def categoria():
     categoria = Categoria.query.all()
     return CategoriaSchema().dump(categoria, many=True)
 
+
+
+
+
+
 @celulares_bp.route('/equipos', methods=['GET','POST'])
+@jwt_required()
 def equipos():
+    additional_data =get_jwt()
+    administrador = additional_data.get('administrador') 
     if request.method == 'POST':
         data = request.get_json()
         errors = EquipoSchema().validate(data)
         if errors:
             return make_response(jsonify(errors))
-        return {}
+        return {"mensaje":"tuviste exito"}
+
+    
+    equipos = Equipo.query.all()
+    if administrador:
+        return EquipoSchema().dump(obj=equipos, many=True)
+    else:
+        return MinimalEquipoSchema().dump(obj=equipos, many=True)
+
+@celulares_bp.route('/editar/<id>/equipo', methods=['GET', 'POST'])
+def editar_equipo(id):
+    equipo = Equipo.query.get_or_404(id)
+    if request.method == 'POST':
+        data = request.get_json()
+        errors = EquipoSchema().validate(data)
+        if errors:
+            return make_response(jsonify(errors))
+        else:
+            equipo.nombre = data.get('nombre')
+            equipo.costo = data.get('costo')
+            db.session.commit()
 
     equipos = Equipo.query.all()
     return EquipoSchema().dump(equipos, many=True)

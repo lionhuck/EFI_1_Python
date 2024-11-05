@@ -24,10 +24,11 @@ auth_bp = Blueprint('auth',__name__)
 @auth_bp.route("/users", methods=['POST', 'GET'])
 @jwt_required()
 def user(): 
-    print(get_jwt_identity())
+    print(request.get_json)
     additional_data =get_jwt()
     administrador = additional_data.get('administrador') 
     if request.method == 'POST':
+
         data = request.get_json()
         nombre = data.get('nombre')
         password = data.get('password')
@@ -78,12 +79,12 @@ def login():
         
         acces_token = create_access_token(
             identity=nombre,
-            expires_delta=timedelta(minutes=10),
+            expires_delta=timedelta(hours=2),
             additional_claims=dict(
                 administrador=usuario.is_admin
             ),
         )
-        return jsonify({"Mensaje": f"Token {acces_token}"})
+        return jsonify({"Token": f"{acces_token}"})
     else:
         return jsonify({"Mensaje": "Usuario o contraseña incorrectos"}), 401
 
@@ -359,7 +360,5 @@ def editar_proveedor(id):
         return redirect(url_for('auth.proveedores'))  # Redirige después de editar
 
     return render_template('editar_proveedores.html', proveedor=proveedor)
-
-
 
 
