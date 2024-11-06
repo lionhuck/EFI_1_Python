@@ -1,20 +1,27 @@
-# imagen de la distro de Linux
-FROM python:alpine3.19
 #imagen de Python y distro linux que vamos a usar
+FROM python:3.10
+
 
 # Copia todo lo del directorio en el contenedor
-COPY . /first_docker_b
+COPY . /app
 
-# Setea el directorio de trabajo en el contenedor
-WORKDIR /first_docker_b
+
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /app
+
 
 # Corre comandos
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+
 # Expone puerto
 EXPOSE 5005
 
-ENTRYPOINT [ "python" ]
+# OPCIÓN 1
+# Setear las variables de entorno para Flask
+ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
+ENV FLASK_RUN_HOST=0.0.0.0
 
-CMD [ "app.py" ]
+CMD ["sh","run.sh"]
