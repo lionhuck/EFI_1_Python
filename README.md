@@ -6,8 +6,9 @@ LEPAGO es una aplicación creada por León, Pablo y Gonzalo, que permite crear y
 
   
 1. Hacer un git clone del repositorio en tu computadora local:
-   git clone https://github.com/lionhuck/EFI_1_Python
-
+```bash
+  git clone https://github.com/lionhuck/EFI_1_Python
+```
 2. Crear un entorno virtual en tu computadora usando:
 ```bash
   python3 -m venv nombre_del_entorno
