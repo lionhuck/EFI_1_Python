@@ -100,15 +100,11 @@ def create_admin():
 
     # Validar los campos necesarios
     nombre = data.get('nombre')
-    apellido = data.get('apellido')
-    email = data.get('email')
     password = data.get('password')
 
     password_hasheada = generate_password_hash(password, method='pbkdf2', salt_length=8)
     nuevo_admin = Usuario(
         nombre=nombre,
-        apellido=apellido,
-        email=email,
         password=password_hasheada,
         is_admin=True
     )
