@@ -90,7 +90,33 @@ def login():
 
 
 
+@auth_bp.route("/create_admin", methods=['POST'])
+def create_admin():
+    # Verificar si ya existe un usuario administrador en la base de datos
+    if Usuario.query.filter_by(is_admin=True).first():
+        return jsonify({"msg": "Ya existe un usuario administrador"}), 400
+    
+    data = request.get_json()
 
+    # Validar los campos necesarios
+    nombre = data.get('nombre')
+    apellido = data.get('apellido')
+    email = data.get('email')
+    password = data.get('password')
+
+    password_hasheada = generate_password_hash(password, method='pbkdf2', salt_length=8)
+    nuevo_admin = Usuario(
+        nombre=nombre,
+        apellido=apellido,
+        email=email,
+        password=password_hasheada,
+        is_admin=True
+    )
+
+    db.session.add(nuevo_admin)
+    db.session.commit()
+
+    return jsonify({"msg": "Usuario administrador creado exitosamente"}), 201
 
 
 
