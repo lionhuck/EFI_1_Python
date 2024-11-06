@@ -24,41 +24,81 @@ def categoria():
     return CategoriaSchema().dump(categoria, many=True)
 
 
-
-
-
-
 @celulares_bp.route('/equipos', methods=['GET','POST'])
 @jwt_required()
 def equipos():
     additional_data =get_jwt()
     administrador = additional_data.get('administrador') 
     if request.method == 'POST':
-        data = request.get_json()
-        errors = EquipoSchema().validate(data)
-        if errors:
-            return make_response(jsonify(errors))
-        return {"mensaje":"tuviste exito"}
+        if administrador:
+            data = request.get_json()
+            errors = EquipoSchema().validate(data)
+            if errors:
+                return make_response(jsonify(errors))
+            else:
 
-    
-    equipos = Equipo.query.all()
+                nombre = data.get('nombre')
+                modelo_id = data.get('modelo_id')
+                categoria_id = data.get('categoria_id')
+                costo = data.get('costo')
+                nuevo_equipo = Equipo(nombre=nombre,modelo_id = modelo_id, categoria_id=categoria_id, costo=costo)
+                db.session.add(nuevo_equipo)
+                db.session.commit()
+        else:
+            return {"mensaje": "No tiene permisos"}
+
+    equipos_activos = Equipo.query.filter_by(activo=1).all()
+
     if administrador:
-        return EquipoSchema().dump(obj=equipos, many=True)
+        return jsonify(EquipoSchema(many=True).dump(equipos_activos))
     else:
-        return MinimalEquipoSchema().dump(obj=equipos, many=True)
+        return jsonify(MinimalEquipoSchema(many=True).dump(equipos_activos))
 
-@celulares_bp.route('/editar/<id>/equipo', methods=['GET', 'POST'])
+@celulares_bp.route('/editar/<int:id>/equipo', methods=['GET', 'POST'])
+@jwt_required()
 def editar_equipo(id):
+    additional_data = get_jwt()  
+    administrador = additional_data.get('administrador')
+    
+    equipo = Equipo.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        if administrador:
+            data = request.get_json()
+            errors = EquipoSchema().validate(data)
+            if errors:
+                return make_response(jsonify(errors)), 400
+            else:
+                equipo.nombre = data.get('nombre')
+                equipo.costo = data.get('costo')
+                db.session.commit()
+                return {"mensaje": "Equipo actualizado exitosamente"}, 200 
+        else:
+            return {"mensaje": "No tiene permisos"}, 403  
+
+    equipos_activos = Equipo.query.filter_by(activo=1).all()
+    
+    if administrador:
+        return jsonify(EquipoSchema(many=True).dump(equipos_activos))
+    else:
+        return jsonify(MinimalEquipoSchema(many=True).dump(equipos_activos))
+
+@celulares_bp.route('/eliminar/<id>/equipo', methods=['GET', 'POST'])
+@jwt_required()
+def eliminar_equipo(id):
+    additional_data =get_jwt()
+    administrador = additional_data.get('administrador') 
     equipo = Equipo.query.get_or_404(id)
     if request.method == 'POST':
-        data = request.get_json()
-        errors = EquipoSchema().validate(data)
-        if errors:
-            return make_response(jsonify(errors))
-        else:
-            equipo.nombre = data.get('nombre')
-            equipo.costo = data.get('costo')
+        if administrador:
+            equipo.activo = False
             db.session.commit()
+        else:
+            return {"mensaje": "No tiene permisos"}
 
-    equipos = Equipo.query.all()
-    return EquipoSchema().dump(equipos, many=True)
+    equipos_activos = Equipo.query.filter_by(activo=1).all()
+
+    if administrador:
+        return jsonify(EquipoSchema(many=True).dump(equipos_activos))
+    else:
+        return jsonify(MinimalEquipoSchema(many=True).dump(equipos_activos))
