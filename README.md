@@ -90,11 +90,11 @@ Ejemplos de respuesta:
     }
   ```
 Ejemplo de respuesta:
-  ```bash
-    {
-      "Token": "tu_token_de_autenticación"
-    }
-  ```
+    ```bash
+      {
+        "Token": "tu_token_de_autenticación"
+      }
+    ```
 ## Usuarios
 
 ### Obtener todos los usuarios
