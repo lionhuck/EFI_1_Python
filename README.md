@@ -4,108 +4,100 @@ LEPAGO es una aplicación creada por León, Pablo y Gonzalo, que permite crear y
 
 ## Instalación
 
-```bash
+  
 1. Hacer un git clone del repositorio en tu computadora local:
-   git clone <url-del-repositorio>
+   git clone https://github.com/lionhuck/EFI_1_Python
 
 2. Crear un entorno virtual en tu computadora usando:
-   python3 -m venv nombre_del_entorno
-   # Recomendación: Usar `env` o `venv` como nombre del entorno.
-
+```bash
+  python3 -m venv nombre_del_entorno
+  # Recomendación: Usar `env` o `venv` como nombre del entorno.
+```
 3. Activar el entorno virtual:
-   source nombre_del_entorno/bin/activate
-
+```bash
+  source nombre_del_entorno/bin/activate
+```
 4. Instalar los requerimientos dentro del entorno usando:
-   pip install -r requirements.txt
-
+```bash
+  pip install -r requirements.txt
+```
 5. Instalar XAMPP en una terminal aparte: https://www.apachefriends.org/es/download.html.
 
 6. Iniciar XAMPP en la terminal con:
-   sudo /opt/lampp/lampp start
-
+```bash
+  sudo /opt/lampp/lampp start
+```
 7. Ir a la página http://localhost/dashboard/ y crear en phpMyAdmin una nueva base de datos llamada `celulares`. Esto es importante porque allí se enviarán todos los datos del programa.
 
 8. Inicializar la base de datos por consola usando:
-   flask db init
-
+```bash
+  flask db init
+```
 9. Hacer el primer commit de migraciones usando:
-   flask db migrate -m "Mensaje de la migración"
-
+```bash
+  flask db migrate -m "Mensaje de la migración"
+```
 10. Correr el comando para aplicar la migración e iniciar la base de datos:
+```bash
     flask db upgrade
-
+```
 11. Usando la terminal, correr el programa con:
+```bash
     flask run --reload
+```
 
-
-## Endpoints de la API
+# Endpoints de la API
 
 A continuación se describen los principales endpoint de la API con ejemplos de solicitud y respuesta.
 
-Administrador
+## Administrador
 
-Crear un usuario administrador
-
-Método: POST
-Endpoint: /create_admin
-Cuerpo de solicitud:
-{
-  "nombre":"nombre_admin",
-  "password":"password_admin"
-}
-
-Ejemplos de respuesta:
-Si no existe:
-{
-  "msg": "Usuario administrador creado exitosamente"
-}
-Si existe:
-{
-  "msg": "Ya existe un usuario administrador"
-}
-
-### Administrador
-
-Crear un usuario administrador
+### Crear un usuario administrador
 
 - Método: POST
 - Endpoint: /create_admin
 - Cuerpo de solicitud:
-  {
-    "nombre": "nombre_admin",
-    "password": "password_admin"
-  }
-
+```bash
+{
+  "nombre":"nombre_admin",
+  "password":"password_admin"
+}
+```
 Ejemplos de respuesta:
 - Si no existe:
-  {
-    "msg": "Usuario administrador creado exitosamente"
-  }
+```bash
+{
+  "msg": "Usuario administrador creado exitosamente"
+}
+```
 - Si existe:
-  {
-    "msg": "Ya existe un usuario administrador"
-  }
+```bash
+{
+  "msg": "Ya existe un usuario administrador"
+}
+```
+## Autenticación
 
-### Autenticación
-
-Obtener token de autenticación
+### Obtener token de autenticación
 
 - Método: POST
 - Endpoint: /login
 - Cuerpo de solicitud:
+```bash
   {
     "nombre": "nombre",
     "password": "password"
   }
-
+```
 Ejemplo de respuesta:
+```bash
   {
     "Token": "tu_token_de_autenticación"
   }
+```
+## Usuarios
 
-### Usuarios
-
-Obtener todos los usuarios
+### Obtener todos los usuarios
 
 - Método: GET
 - Endpoint: /users
@@ -113,6 +105,7 @@ Obtener todos los usuarios
 
 Ejemplos de respuesta:
 - Si es admin:
+```bash
   [
       {
         "id": "usuario_id",
@@ -122,17 +115,19 @@ Ejemplos de respuesta:
       },
       // Otros usuarios
   ]
+```
 - Si no es admin:
+```bash
   [
       {
         "nombre": "nombre_usuario"
       },
       // Otros objetos de usuarios
   ]
+```
+## Modelos
 
-### Modelos
-
-Obtener todos los modelos
+### Obtener todos los modelos
 
 - Método: GET
 - Endpoint: /modelo
@@ -140,6 +135,7 @@ Obtener todos los modelos
 
 Ejemplos de respuesta:
 - Si es admin:
+```bash
   [
       {
         "id": "modelo_id",
@@ -147,17 +143,19 @@ Ejemplos de respuesta:
       },
       // Otros objetos de modelo 
   ]
+  ```
 - Si no es admin:
+```bash
   [
       {
         "nombre": "nombre_modelo"
       },
       // Otros objetos de modelo 
   ]
+```
+## Categorías
 
-### Categorías
-
-Obtener todas las categorías
+### Obtener todas las categorías
 
 - Método: GET
 - Endpoint: /categoria
@@ -165,6 +163,7 @@ Obtener todas las categorías
 
 Ejemplos de respuesta:
 - Si es admin:
+```bash
   [
       {
         "id": "categoria_id",
@@ -172,14 +171,16 @@ Ejemplos de respuesta:
       },
       // Otros objetos de categoria 
   ]
+  ```
 - Si no es admin:
+```bash
   [
       {
         "nombre": "nombre_categoria"
       },
       // Otros objetos de categoria 
   ]
-
+```
 Si todo salio bien, podras disfrutar de este impresionante programa hecho, modificado y programado por: Pablo Aldo Amedey Dilena, Gonzalo Nicolas Toledo, Leon Federico Huck.
 
 En cuanto al uso propiamente dicho del programa, la idea principal es poder llegar a la creacion de un celular habiendo antes creado elementos como, piases, fabricantes, proveedores, caracteristicas, etc.
