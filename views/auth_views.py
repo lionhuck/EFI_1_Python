@@ -40,7 +40,6 @@ def user():
                 method='pbkdf2',
                 salt_length=8
             )
-            print(password_hasheada)
             try:
                 nuevo_usuario = Usuario(nombre=nombre, password=password_hasheada)
                 db.session.add(nuevo_usuario)

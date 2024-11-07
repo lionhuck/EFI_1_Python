@@ -24,7 +24,7 @@ def categoria():
     return CategoriaSchema().dump(categoria, many=True)
 
 
-@celulares_bp.route('/equipos', methods=['GET','POST'])
+@celulares_bp.route('/equipos', methods=['POST','GET'])
 @jwt_required()
 def equipos():
     additional_data =get_jwt()
