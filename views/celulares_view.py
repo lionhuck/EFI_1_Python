@@ -54,7 +54,7 @@ def equipos():
     else:
         return jsonify(MinimalEquipoSchema(many=True).dump(equipos_activos))
 
-@celulares_bp.route('/editar/<int:id>/usuario', methods=['GET', 'POST'])
+@celulares_bp.route('/editar/<int:id>/equipo', methods=['GET', 'POST'])
 @jwt_required()
 def editar_equipo(id):
     additional_data = get_jwt()  

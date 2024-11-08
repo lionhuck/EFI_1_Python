@@ -6,6 +6,7 @@ class Equipo(db.Model):
     modelo_id = db.Column(db.Integer, db.ForeignKey('modelo.id'), nullable=False)    
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.id'), nullable=False)
     costo = db.Column(db.Integer, nullable=False)
+    activo = db.Column(db.Boolean, nullable=False, default=True)
 
     modelo = db.relationship('Modelo', backref=db.backref('equipos', lazy=True))
     categoria = db.relationship('Categoria', backref=db.backref('equipos', lazy=True))       
@@ -66,3 +67,10 @@ class AccesorioModelo(db.Model):
 class Pais(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(30), nullable=False)
+
+
+class Usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    is_admin = db.Column(db.Boolean)
