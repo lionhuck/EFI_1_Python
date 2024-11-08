@@ -56,6 +56,95 @@ def user():
         return MinimalUsuarioSchema().dump(usuarios, many=True)
                 
          
+@auth_bp.route("/users/<int:id>", methods=['PUT'])
+@jwt_required()
+def update_user(id):
+    # Obtener información del token
+    additional_data = get_jwt()
+    administrador = additional_data.get('administrador')
+    
+    # Verificar si es administrador
+    if not administrador:
+        return jsonify({'mensaje': 'No tiene permisos para actualizar usuarios'}), 403
+        
+    # Buscar el usuario por ID
+    usuario = Usuario.query.get(id)
+    if not usuario:
+        return jsonify({'mensaje': 'Usuario no encontrado'}), 404
+        
+    # Obtener datos de la solicitud
+    data = request.get_json()
+    
+    try:
+        # Actualizar nombre si se proporciona
+        if 'nombre' in data:
+            usuario.nombre = data['nombre']
+            
+        # Actualizar contraseña si se proporciona
+        if 'password' in data:
+            password_hasheada = generate_password_hash(
+                data['password'],
+                method='pbkdf2',
+                salt_length=8
+            )
+            usuario.password = password_hasheada
+        
+        if 'is_admin' in data:
+            usuario.is_admin = data['is_admin']
+            
+        # Guardar cambios en la base de datos
+        db.session.commit()
+        
+        return jsonify({
+            'mensaje': 'Usuario actualizado exitosamente',
+            'usuario': UsuarioSchema().dump(usuario)
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'mensaje': f'Error al actualizar usuario: {str(e)}'}), 500
+
+
+
+@auth_bp.route("/users/<int:id>", methods=['DELETE'])
+@jwt_required()
+def delete_user(id):
+    # Obtener información del token
+    additional_data = get_jwt()
+    administrador = additional_data.get('administrador')
+    
+    # Verificar si es administrador
+    if not administrador:
+        return jsonify({
+            'mensaje': 'No tiene permisos para eliminar usuarios'
+        }), 403
+        
+    # Buscar el usuario por ID
+    usuario = Usuario.query.get(id)
+    if not usuario:
+        return jsonify({
+            'mensaje': 'Usuario no encontrado'
+        }), 404
+        
+    try:
+        # Eliminar el usuario
+        db.session.delete(usuario)
+        db.session.commit()
+        
+        return jsonify({
+            'mensaje': 'Usuario eliminado exitosamente',
+            'usuario': usuario.nombre
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'mensaje': f'Error al eliminar usuario: {str(e)}'
+        }), 500
+
+
+
+
 
 
 
