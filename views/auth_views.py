@@ -223,21 +223,21 @@ def equipos():
     return render_template('equipos.html', equipos=equipos, modelos=modelos, categorias=categorias)
     
     
-@auth_bp.route('/editar/<id>/equipos', methods=['GET', 'POST'])
-def editar_equipos(id):
-    equipo = Equipo.query.get_or_404(id)
-    modelos = Modelo.query.all()
-    categorias = Categoria.query.all()
+# @auth_bp.route('/editar/<id>/equipos', methods=['GET', 'POST'])
+# def editar_equipos(id):
+#     equipo = Equipo.query.get_or_404(id)
+#     modelos = Modelo.query.all()
+#     categorias = Categoria.query.all()
 
-    if request.method == 'POST':
-        equipo.nombre = request.form['nombre']
-        equipo.modelo_id = request.form['modelo_id']
-        equipo.categoria_id = request.form['categoria_id']
-        equipo.costo = request.form['costo']
-        db.session.commit()
-        return redirect(url_for('auth.equipos'))  # Redirige después de editar
+#     if request.method == 'POST':
+#         equipo.nombre = request.form['nombre']
+#         equipo.modelo_id = request.form['modelo_id']
+#         equipo.categoria_id = request.form['categoria_id']
+#         equipo.costo = request.form['costo']
+#         db.session.commit()
+#         return redirect(url_for('auth.equipos'))  # Redirige después de editar
 
-    return render_template('editar_equipos.html', equipo=equipo, modelos=modelos, categorias=categorias)
+#     return render_template('editar_equipos.html', equipo=equipo, modelos=modelos, categorias=categorias)
 
 
 
